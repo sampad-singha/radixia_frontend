@@ -1,35 +1,40 @@
-import {useEffect, useState} from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
-import { verifyLogin } from "@/features/authentication/services/auth.service.ts"
-import { sendMfaChallenge } from "@/features/authentication/services/mfa.service.ts"
-import { Button } from "@/components/ui/button.tsx"
-import { Input } from "@/components/ui/input.tsx"
+
+import { useVerifyLogin, useSendMfaChallenge } from "@/features/authentication/queries/mfa.queries"
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select.tsx"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
-import { Label } from "@/components/ui/label.tsx"
-import {Loader2} from "lucide-react";
+} from "@/components/ui/select"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+
+import { Loader2 } from "lucide-react"
+import type { ApiError } from "@/lib/types"
 
 export default function VerifyMfaPage() {
 
     const navigate = useNavigate()
     const queryClient = useQueryClient()
 
+    const verifyMutation = useVerifyLogin()
+    const challengeMutation = useSendMfaChallenge()
+
     const methods =
         JSON.parse(sessionStorage.getItem("mfa_methods") || "[]")
 
-    const [type,setType] = useState(methods[0] || "")
-    const [code,setCode] = useState("")
-    const [loading,setLoading] = useState(false)
-    const [challengeLoading,setChallengeLoading] = useState(false)
+    const [type, setType] = useState(methods[0] || "")
+    const [code, setCode] = useState("")
+    const [error, setError] = useState<string | null>(null)
 
-    // prevent direct navigation to page
     const token = localStorage.getItem("token")
 
     useEffect(() => {
@@ -38,69 +43,57 @@ export default function VerifyMfaPage() {
         }
     }, [methods, token, navigate])
 
-    const handleVerify = async () => {
+    const handleVerify = () => {
 
-        try {
+        setError(null)
 
-            setLoading(true)
+        verifyMutation.mutate(
+            { type, code },
+            {
+                onSuccess: async () => {
 
-            await verifyLogin(type, code)
+                    sessionStorage.removeItem("mfa_methods")
 
-            sessionStorage.removeItem("mfa_methods")
+                    await queryClient.invalidateQueries({ queryKey: ["user"] })
 
-            await queryClient.invalidateQueries({ queryKey: ["user"] })
+                    navigate("/profile")
+                },
 
-            navigate("/profile")
+                onError: (error: ApiError) => {
 
-        } catch {
+                    if (error.code === "VALIDATION_ERROR") {
+                        const first = Object.values(error.errors ?? {})[0]
+                        setError(first?.[0] ?? error.message)
+                        return
+                    }
 
-            alert("Invalid verification code")
-
-        } finally {
-
-            setLoading(false)
-
-        }
+                    setError(error.message)
+                }
+            }
+        )
     }
 
-    const handleMethodChange = async (value: string) => {
+    const handleMethodChange = (value: string) => {
 
         setType(value)
+        setError(null)
 
-        try {
-
-            setChallengeLoading(true)
-
-            await sendMfaChallenge(value)
-
-        } catch {
-
-            alert("Failed to send verification code")
-
-        } finally {
-
-            setChallengeLoading(false)
-
-        }
+        challengeMutation.mutate(value, {
+            onError: (error: ApiError) => {
+                setError(error.message)
+            }
+        })
     }
 
-    const resendCode = async () => {
+    const resendCode = () => {
 
-        try {
+        setError(null)
 
-            setChallengeLoading(true)
-
-            await sendMfaChallenge(type)
-
-        } catch {
-
-            alert("Failed to resend verification code")
-
-        } finally {
-
-            setChallengeLoading(false)
-
-        }
+        challengeMutation.mutate(type, {
+            onError: (error: ApiError) => {
+                setError(error.message)
+            }
+        })
     }
 
     return (
@@ -115,6 +108,12 @@ export default function VerifyMfaPage() {
 
                 <CardContent className="space-y-4">
 
+                    {error && (
+                        <p className="text-sm text-destructive">
+                            {error}
+                        </p>
+                    )}
+
                     <div className="space-y-2">
 
                         <Label>Verification Method</Label>
@@ -126,7 +125,7 @@ export default function VerifyMfaPage() {
                             </SelectTrigger>
 
                             <SelectContent>
-                                {methods.map((m:string)=>(
+                                {methods.map((m: string) => (
                                     <SelectItem key={m} value={m}>
                                         {m.toUpperCase()}
                                     </SelectItem>
@@ -155,7 +154,10 @@ export default function VerifyMfaPage() {
 
                         <Input
                             value={code}
-                            onChange={(e)=>setCode(e.target.value)}
+                            onChange={(e) => {
+                                setCode(e.target.value)
+                                setError(null)
+                            }}
                             placeholder="Enter verification code"
                         />
 
@@ -164,10 +166,12 @@ export default function VerifyMfaPage() {
                     <Button
                         className="w-full"
                         onClick={handleVerify}
-                        disabled={loading}
+                        disabled={verifyMutation.isPending}
                     >
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {loading ? "Verifying..." : "Verify"}
+                        {verifyMutation.isPending && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        {verifyMutation.isPending ? "Verifying..." : "Verify"}
                     </Button>
 
                     {type === "email" && (
@@ -175,12 +179,12 @@ export default function VerifyMfaPage() {
                             variant="outline"
                             className="w-full"
                             onClick={resendCode}
-                            disabled={challengeLoading}
+                            disabled={challengeMutation.isPending}
                         >
-                            {challengeLoading && (
+                            {challengeMutation.isPending && (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             )}
-                            {challengeLoading ? "Sending..." : "Resend Code"}
+                            {challengeMutation.isPending ? "Sending..." : "Resend Code"}
                         </Button>
                     )}
 

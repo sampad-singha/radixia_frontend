@@ -1,5 +1,6 @@
 import {useQuery, useMutation} from "@tanstack/react-query"
 import {login, register, getMe, logout} from "@/features/authentication/services/auth.service.ts"
+import type {ApiError, LoginResponse, RegisterResponse} from "@/lib/types.ts";
 
 export const useUser = () =>
     useQuery({
@@ -9,20 +10,32 @@ export const useUser = () =>
     })
 
 export const useLogin = () =>
-    useMutation({
-        mutationFn: ({email, password}: { email: string; password: string }) =>
-            login(email, password)
+    useMutation<
+        LoginResponse,
+        ApiError,
+        { email: string; password: string }
+    >({
+        mutationFn: ({ email, password }) => login(email, password)
     })
 
 export const useRegister = () =>
-    useMutation({
-        mutationFn: ({name, email, password, password_confirmation}: {
+    useMutation<
+        RegisterResponse,
+        ApiError,
+        {
             name: string
             email: string
             password: string
             password_confirmation: string
-        }) =>
-            register(name, email, password, password_confirmation)
+        }
+    >({
+        mutationFn: (data) =>
+            register(
+                data.name,
+                data.email,
+                data.password,
+                data.password_confirmation
+            )
     })
 
 

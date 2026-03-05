@@ -1,12 +1,15 @@
 import React, { useState } from "react"
-import { useRegister } from "@/features/authentication/queries/auth.queries.ts"
-import { Button } from "@/components/ui/button.tsx"
-import { Input } from "@/components/ui/input.tsx"
-import {Loader2} from "lucide-react";
+import { useRegister } from "@/features/authentication/queries/auth.queries"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
+import type { ApiError } from "@/lib/types"
 
 export default function RegisterPage() {
 
     const registerMutation = useRegister()
+
+    const [error, setError] = useState<string | null>(null)
 
     const [form, setForm] = useState({
         name: "",
@@ -18,12 +21,28 @@ export default function RegisterPage() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        registerMutation.mutate({
-            name: form.name,
-            email: form.email,
-            password: form.password,
-            password_confirmation: form.password_confirmation
-        })
+        setError(null)
+
+        registerMutation.mutate(
+            {
+                name: form.name,
+                email: form.email,
+                password: form.password,
+                password_confirmation: form.password_confirmation
+            },
+            {
+                onError: (error: ApiError) => {
+
+                    if (error.code === "VALIDATION_ERROR") {
+                        const first = Object.values(error.errors ?? {})[0]
+                        setError(first?.[0] ?? error.message)
+                        return
+                    }
+
+                    setError(error.message)
+                }
+            }
+        )
     }
 
     return (
@@ -32,6 +51,12 @@ export default function RegisterPage() {
             <form onSubmit={handleSubmit} className="space-y-4 w-80">
 
                 <h1 className="text-xl font-semibold">Register</h1>
+
+                {error && (
+                    <p className="text-sm text-destructive">
+                        {error}
+                    </p>
+                )}
 
                 <Input
                     placeholder="Name"

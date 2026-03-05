@@ -1,6 +1,11 @@
 import { api } from "@/lib/api.ts"
+import type {LoginResponse} from "@/lib/types.ts";
 
-export const login = async (email: string, password: string) => {
+export const login = async (
+    email: string,
+    password: string
+): Promise<LoginResponse> => {
+
     try {
 
         const res = await api.post("/v1/auth/login", {
@@ -9,25 +14,24 @@ export const login = async (email: string, password: string) => {
             device_name: "web"
         })
 
-        const payload = res.data.data
+        const payload: LoginResponse = res.data.data
 
         localStorage.setItem("token", payload.token)
 
         return payload
 
-    } catch (err: any) {
+    } catch (error: any) {
 
-        // MFA challenge
-        if (err.response?.status === 423) {
+        if (error.status === 423) {
 
-            const payload = err.response.data.data
+            const payload: LoginResponse = error.data.data
 
             localStorage.setItem("token", payload.token)
 
             return payload
         }
 
-        throw err
+        throw error
     }
 }
 
