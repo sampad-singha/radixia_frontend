@@ -1,9 +1,10 @@
-import { useUser } from "@/queries/auth.queries"
-import { Button } from "@/components/ui/button"
-import { useLogout } from "@/queries/auth.queries"
+import { useUser } from "@/features/authentication/queries/auth.queries.ts"
+import { Button } from "@/components/ui/button.tsx"
+import { useLogout } from "@/features/authentication/queries/auth.queries.ts"
+import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage() {
-
+    const navigate = useNavigate()
     const { data: user, isLoading } = useUser()
     const logout = useLogout()
 
@@ -19,7 +20,11 @@ export default function ProfilePage() {
 
             <Button
                 className="mt-4"
-                onClick={() => logout.mutate()}
+                onClick={() =>
+                    logout.mutate(undefined, {
+                        onSuccess: () => navigate("/")
+                    })
+                }
             >
                 Logout
             </Button>

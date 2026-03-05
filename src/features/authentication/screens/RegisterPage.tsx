@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { useRegister } from "@/queries/auth.queries"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useRegister } from "@/features/authentication/queries/auth.queries.ts"
+import { Button } from "@/components/ui/button.tsx"
+import { Input } from "@/components/ui/input.tsx"
+import {Loader2} from "lucide-react";
 
 export default function RegisterPage() {
 
@@ -74,6 +75,9 @@ export default function RegisterPage() {
                     className="w-full"
                     disabled={registerMutation.isPending}
                 >
+                    {registerMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {registerMutation.isPending ? "Creating..." : "Register"}
                 </Button>
 

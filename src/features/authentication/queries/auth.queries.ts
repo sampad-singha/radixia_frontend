@@ -1,10 +1,11 @@
 import {useQuery, useMutation} from "@tanstack/react-query"
-import {login, register, getMe, logout} from "@/services/auth.service"
+import {login, register, getMe, logout} from "@/features/authentication/services/auth.service.ts"
 
 export const useUser = () =>
     useQuery({
         queryKey: ["user"],
-        queryFn: getMe
+        queryFn: getMe,
+        enabled: !!localStorage.getItem("token"),
     })
 
 export const useLogin = () =>
