@@ -1,9 +1,65 @@
 import { api } from "@/lib/api"
 
 export const login = async (email: string, password: string) => {
-    const res = await api.post("/v1/auth/login", {
+    try {
+
+        const res = await api.post("/v1/auth/login", {
+            email,
+            password,
+            device_name: "web"
+        })
+
+        const payload = res.data.data
+
+        localStorage.setItem("token", payload.token)
+
+        return payload
+
+    } catch (err: any) {
+
+        // MFA challenge
+        if (err.response?.status === 423) {
+
+            const payload = err.response.data.data
+
+            localStorage.setItem("token", payload.token)
+
+            return payload
+        }
+
+        throw err
+    }
+}
+
+export const verifyLogin = async (
+    type: string,
+    code: string
+) => {
+
+    const res = await api.post("/v1/auth/verify-login", {
+        type,
+        code,
+        device_name: "web"
+    })
+
+    const payload = res.data.data
+
+    localStorage.setItem("token", payload.token)
+
+    return payload.user
+}
+
+export const register = async (
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string
+) => {
+    const res = await api.post("/v1/auth/register", {
+        name,
         email,
         password,
+        password_confirmation,
         device_name: "web"
     })
 
@@ -13,14 +69,9 @@ export const login = async (email: string, password: string) => {
     return res.data
 }
 
-export const register = async (data: any) => {
-    const res = await api.post("/v1/auth/register", data)
-    return res.data
-}
-
 export const getMe = async () => {
     const res = await api.get("/v1/auth/me")
-    return res.data
+    return res.data.data.user
 }
 
 export const logout = async () => {
