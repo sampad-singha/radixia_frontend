@@ -2,13 +2,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useConfirmMfa } from "@/features/authentication/queries/mfa.queries"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function ConfirmMfa({ type }: { type: string }) {
 
     const confirmMutation = useConfirmMfa()
+    const queryClient = useQueryClient()
 
     const [code, setCode] = useState("")
-    const [success, setSuccess] = useState(false)
 
     const handleConfirm = () => {
 
@@ -16,19 +17,15 @@ export default function ConfirmMfa({ type }: { type: string }) {
             { type, code },
             {
                 onSuccess: () => {
-                    setSuccess(true)
+
+                    queryClient.invalidateQueries({
+                        queryKey: ["mfa-methods"]
+                    })
+
                 }
             }
         )
 
-    }
-
-    if (success) {
-        return (
-            <p className="text-green-600 text-sm">
-                MFA successfully enabled
-            </p>
-        )
     }
 
     return (

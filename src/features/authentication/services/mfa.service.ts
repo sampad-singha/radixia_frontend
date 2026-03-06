@@ -46,3 +46,11 @@ export const disableMfa = async () => {
 
     return res.data
 }
+
+export const regenerateRecoveryCodes = async (): Promise<string[]> => {
+
+    const res = await api.post("/v1/auth/two-factor/recovery-codes")
+
+    return res.data.data.recovery_codes
+
+}

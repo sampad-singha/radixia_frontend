@@ -1,5 +1,11 @@
-import { useMutation } from "@tanstack/react-query"
-import {confirmMfa, disableMfa, enableMfa, sendMfaChallenge} from "@/features/authentication/services/mfa.service.ts"
+import {useMutation, useQuery} from "@tanstack/react-query"
+import {
+    confirmMfa,
+    disableMfa,
+    enableMfa,
+    getTwoFactorMethods, regenerateRecoveryCodes,
+    sendMfaChallenge
+} from "@/features/authentication/services/mfa.service.ts"
 import {verifyLogin} from "@/features/authentication/services/auth.service.ts";
 import type {ApiError} from "@/lib/types.ts";
 
@@ -36,4 +42,15 @@ export const useConfirmMfa = () =>
 export const useDisableMfa = () =>
     useMutation({
         mutationFn: disableMfa
+    })
+
+export const useTwoFactorMethods = () =>
+    useQuery({
+        queryKey: ["mfa-methods"],
+        queryFn: getTwoFactorMethods
+    })
+
+export const useRegenerateRecoveryCodes = () =>
+    useMutation({
+        mutationFn: regenerateRecoveryCodes
     })
