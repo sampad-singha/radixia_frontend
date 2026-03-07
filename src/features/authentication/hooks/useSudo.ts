@@ -1,38 +1,13 @@
-import { useState } from "react"
-import { useSudoStatus } from "../queries/sudo.queries"
+import { useContext } from "react"
+import { SudoContext } from "../context/SudoContext"
 
-export function useSudo() {
+export const useSudo = () => {
 
-    const { data } = useSudoStatus()
+    const ctx = useContext(SudoContext)
 
-    const [open, setOpen] = useState(false)
-    const [callback, setCallback] = useState<(() => void) | null>(null)
-
-    const requireSudo = (action: () => void) => {
-
-        if (data?.confirmed) {
-            action()
-            return
-        }
-
-        setCallback(() => action)
-        setOpen(true)
+    if (!ctx) {
+        throw new Error("useSudo must be used inside SudoProvider")
     }
 
-    const complete = () => {
-
-        setOpen(false)
-
-        if (callback) {
-            callback()
-        }
-    }
-
-    return {
-        open,
-        methods: data?.available_methods ?? [],
-        requireSudo,
-        complete,
-        close: () => setOpen(false)
-    }
+    return ctx
 }

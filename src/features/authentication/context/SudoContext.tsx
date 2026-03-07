@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useRef, useState} from "react"
+import {createContext, useEffect, useRef, useState} from "react"
 import { confirmSudo } from "../services/sudo.service"
 import { sudoBus } from "@/lib/sudoBus"
 import { api } from "@/lib/api"
@@ -13,7 +13,7 @@ type SudoContextType = {
     close: () => void
 }
 
-const SudoContext = createContext<SudoContextType | null>(null)
+export const SudoContext = createContext<SudoContextType | null>(null)
 
 export function SudoProvider({ children }: { children: React.ReactNode }) {
 
@@ -21,7 +21,7 @@ export function SudoProvider({ children }: { children: React.ReactNode }) {
     const [methods, setMethods] = useState<AuthMethod[]>([])
     const [pendingRequest, setPendingRequest] = useState<any>(null)
     const queryClient = useQueryClient()
-    const rejectRef = useRef<(reason?: any) => void>()
+    const rejectRef = useRef<((reason?: any) => void) | null>(null)
 
     useEffect(() => {
 
@@ -65,7 +65,7 @@ export function SudoProvider({ children }: { children: React.ReactNode }) {
 
         if (rejectRef.current) {
             rejectRef.current({ message: "Sudo cancelled" })
-            rejectRef.current = undefined
+            rejectRef.current = null
         }
 
     }
@@ -82,15 +82,4 @@ export function SudoProvider({ children }: { children: React.ReactNode }) {
             {children}
         </SudoContext.Provider>
     )
-}
-
-export const useSudo = () => {
-
-    const ctx = useContext(SudoContext)
-
-    if (!ctx) {
-        throw new Error("useSudo must be used inside SudoProvider")
-    }
-
-    return ctx
 }

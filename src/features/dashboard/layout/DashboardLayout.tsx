@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom"
 import DashboardSidebar from "./DashboardSidebar"
 import SudoModal from "@/features/authentication/components/SudoModal"
-import { SudoProvider, useSudo } from "@/features/authentication/context/SudoContext"
+import { SudoProvider } from "@/features/authentication/context/SudoContext"
+import {useSudo} from "@/features/authentication/hooks/useSudo.ts";
 
 function LayoutContent() {
 
