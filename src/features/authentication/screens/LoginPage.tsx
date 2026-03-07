@@ -29,8 +29,12 @@ export default function LoginPage() {
                     if (data.mfa_required) {
 
                         sessionStorage.setItem(
-                            "mfa_methods",
-                            JSON.stringify(data.available_methods)
+                            "mfa_data",
+                            JSON.stringify({
+                                methods: data.available_methods,
+                                defaultMethod: data.default_method,
+                                challengeSent: data.challenge_sent
+                            })
                         )
 
                         navigate("/verify-mfa")
@@ -49,7 +53,6 @@ export default function LoginPage() {
                         const firstField = Object.values(error.errors ?? {})[0]
 
                         setError(firstField?.[0] ?? error.message)
-
                         return
                     }
 

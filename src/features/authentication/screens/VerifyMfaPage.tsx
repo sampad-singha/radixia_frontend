@@ -2,19 +2,29 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 
-import { useVerifyLogin, useSendMfaChallenge } from "@/features/authentication/queries/mfa.queries"
+import {
+    useVerifyLogin,
+    useSendMfaChallenge
+} from "@/features/authentication/queries/mfa.queries"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
+    SelectValue
 } from "@/components/ui/select"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle
+} from "@/components/ui/card"
+
 import { Label } from "@/components/ui/label"
 
 import { Loader2 } from "lucide-react"
@@ -28,20 +38,42 @@ export default function VerifyMfaPage() {
     const verifyMutation = useVerifyLogin()
     const challengeMutation = useSendMfaChallenge()
 
-    const methods =
-        JSON.parse(sessionStorage.getItem("mfa_methods") || "[]")
+    const mfa = JSON.parse(
+        sessionStorage.getItem("mfa_data") || "{}"
+    )
 
-    const [type, setType] = useState(methods[0] || "")
+    const methods: string[] = mfa.methods ?? []
+    const defaultMethod: string | null = mfa.defaultMethod ?? null
+    const initialChallengeSent: boolean = mfa.challengeSent ?? false
+
+    const [type, setType] = useState<string>(defaultMethod || "")
     const [code, setCode] = useState("")
     const [error, setError] = useState<string | null>(null)
+    const [challengeSent, setChallengeSent] = useState(initialChallengeSent)
 
     const token = localStorage.getItem("token")
 
     useEffect(() => {
+
         if (!methods.length && !token) {
             navigate("/login")
         }
+
     }, [methods, token, navigate])
+
+    useEffect(() => {
+
+        if (!challengeSent && defaultMethod) {
+
+            challengeMutation.mutate(defaultMethod, {
+                onSuccess: () => {
+                    setChallengeSent(true)
+                }
+            })
+
+        }
+
+    }, [])
 
     const handleVerify = () => {
 
@@ -52,9 +84,11 @@ export default function VerifyMfaPage() {
             {
                 onSuccess: async () => {
 
-                    sessionStorage.removeItem("mfa_methods")
+                    sessionStorage.removeItem("mfa_data")
 
-                    await queryClient.invalidateQueries({ queryKey: ["user"] })
+                    await queryClient.invalidateQueries({
+                        queryKey: ["user"]
+                    })
 
                     navigate("/profile")
                 },
@@ -62,7 +96,9 @@ export default function VerifyMfaPage() {
                 onError: (error: ApiError) => {
 
                     if (error.code === "VALIDATION_ERROR") {
+
                         const first = Object.values(error.errors ?? {})[0]
+
                         setError(first?.[0] ?? error.message)
                         return
                     }
@@ -77,8 +113,12 @@ export default function VerifyMfaPage() {
 
         setType(value)
         setError(null)
+        setChallengeSent(false)
 
         challengeMutation.mutate(value, {
+            onSuccess: () => {
+                setChallengeSent(true)
+            },
             onError: (error: ApiError) => {
                 setError(error.message)
             }
@@ -118,74 +158,103 @@ export default function VerifyMfaPage() {
 
                         <Label>Verification Method</Label>
 
-                        <Select value={type} onValueChange={handleMethodChange}>
+                        <Select
+                            value={type}
+                            onValueChange={handleMethodChange}
+                        >
 
                             <SelectTrigger>
                                 <SelectValue placeholder="Select method" />
                             </SelectTrigger>
 
                             <SelectContent>
-                                {methods.map((m: string) => (
+
+                                {methods.map((m) => (
+
                                     <SelectItem key={m} value={m}>
                                         {m.toUpperCase()}
                                     </SelectItem>
+
                                 ))}
+
                             </SelectContent>
 
                         </Select>
 
                     </div>
 
-                    {type === "email" && (
+                    {challengeSent && type === "email" && (
                         <p className="text-sm text-muted-foreground">
                             Enter the verification code sent to your email.
                         </p>
                     )}
 
-                    {type === "totp" && (
+                    {challengeSent && type === "totp" && (
                         <p className="text-sm text-muted-foreground">
                             Enter the code from your authenticator app.
                         </p>
                     )}
 
-                    <div className="space-y-2">
+                    {challengeSent && (
 
-                        <Label>Verification Code</Label>
+                        <div className="space-y-2">
 
-                        <Input
-                            value={code}
-                            onChange={(e) => {
-                                setCode(e.target.value)
-                                setError(null)
-                            }}
-                            placeholder="Enter verification code"
-                        />
+                            <Label>Verification Code</Label>
 
-                    </div>
+                            <Input
+                                value={code}
+                                onChange={(e) => {
+                                    setCode(e.target.value)
+                                    setError(null)
+                                }}
+                                placeholder="Enter verification code"
+                            />
 
-                    <Button
-                        className="w-full"
-                        onClick={handleVerify}
-                        disabled={verifyMutation.isPending}
-                    >
-                        {verifyMutation.isPending && (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        )}
-                        {verifyMutation.isPending ? "Verifying..." : "Verify"}
-                    </Button>
+                        </div>
 
-                    {type === "email" && (
+                    )}
+
+                    {challengeSent && (
+
+                        <Button
+                            className="w-full"
+                            onClick={handleVerify}
+                            disabled={verifyMutation.isPending}
+                        >
+
+                            {verifyMutation.isPending && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+
+                            {verifyMutation.isPending
+                                ? "Verifying..."
+                                : "Verify"
+                            }
+
+                        </Button>
+
+                    )}
+
+                    {challengeSent && type === "email" && (
+
                         <Button
                             variant="outline"
                             className="w-full"
                             onClick={resendCode}
                             disabled={challengeMutation.isPending}
                         >
+
                             {challengeMutation.isPending && (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             )}
-                            {challengeMutation.isPending ? "Sending..." : "Resend Code"}
+
+                            {challengeMutation.isPending
+                                ? "Sending..."
+                                : "Resend Code"
+                            }
+
                         </Button>
+
                     )}
 
                 </CardContent>
