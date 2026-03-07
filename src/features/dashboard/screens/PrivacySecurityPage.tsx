@@ -1,4 +1,5 @@
 import TwoFactorSection from "@/features/dashboard/components/TwoFactorSection.tsx";
+import ChangePasswordSection from "@/features/dashboard/components/ChangePasswordSection.tsx";
 
 export default function PrivacySecurityPage() {
 
@@ -11,6 +12,8 @@ export default function PrivacySecurityPage() {
             </h1>
 
             <TwoFactorSection />
+
+            <ChangePasswordSection />
 
         </div>
 

@@ -27,3 +27,9 @@ export type RegisterResponse = {
 }
 
 export type MfaType = "email" | "totp"
+
+export type UpdatePasswordPayload = {
+    current_password: string
+    password: string
+    password_confirmation: string
+}

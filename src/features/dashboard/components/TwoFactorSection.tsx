@@ -23,13 +23,7 @@ export default function TwoFactorSection() {
     const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null)
     const [showCodes, setShowCodes] = useState(false)
     const codesMutation = useRecoveryCodes()
-    const handleShowCodes = () => {
-        codesMutation.mutate(undefined, {
-            onSuccess: (codes) => {
-                setRecoveryCodes(codes)
-            }
-        })
-    }
+
     const handleToggleCodes = () => {
 
         if (showCodes) {
