@@ -1,6 +1,6 @@
 import {useQuery, useMutation} from "@tanstack/react-query"
-import {login, register, getMe, logout} from "@/features/authentication/services/auth.service.ts"
-import type {ApiError, LoginResponse, RegisterResponse} from "@/lib/types.ts";
+import {login, register, getMe, logout, updatePassword} from "@/features/authentication/services/auth.service.ts"
+import type {ApiError, LoginResponse, RegisterResponse, UpdatePasswordPayload} from "@/lib/types.ts";
 
 export const useUser = () =>
     useQuery({
@@ -42,4 +42,18 @@ export const useRegister = () =>
 export const useLogout = () =>
     useMutation({
         mutationFn: logout
+    })
+
+export const useUpdatePassword = () =>
+    useMutation<any, ApiError, UpdatePasswordPayload>({
+        mutationFn: ({
+                         current_password,
+                         password,
+                         password_confirmation
+                     }) =>
+            updatePassword(
+                current_password,
+                password,
+                password_confirmation
+            )
     })

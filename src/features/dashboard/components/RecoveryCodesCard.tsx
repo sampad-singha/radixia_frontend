@@ -1,21 +1,15 @@
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
-export default function RecoveryCodes({codes = []}: {
-    codes?: string[]
+export default function RecoveryCodesCard({codes, onRegenerate, loading}: {
+    codes: string[] | null
+    onRegenerate: () => void
+    loading?: boolean
 }) {
-    const [copied, setCopied] = useState(false)
 
-    if (!codes.length) return null
+    if (!codes) return null
 
     const copyCodes = () => {
         navigator.clipboard.writeText(codes.join("\n"))
-
-        setCopied(true)
-
-        setTimeout(() => {
-            setCopied(false)
-        }, 2000)
     }
 
     const exportCodes = () => {
@@ -31,28 +25,34 @@ export default function RecoveryCodes({codes = []}: {
 
     return (
 
-        <div className="space-y-3">
+        <div className="border p-4 rounded-md space-y-4">
 
             <p className="text-sm font-medium">
                 Recovery Codes
             </p>
 
             <div className="grid grid-cols-2 gap-2 text-sm font-mono">
-
                 {codes.map((code) => (
                     <div key={code}>{code}</div>
                 ))}
-
             </div>
 
             <div className="flex gap-2">
 
                 <Button size="sm" onClick={copyCodes}>
-                    {copied ? "Copied" : "Copy"}
+                    Copy
                 </Button>
 
                 <Button size="sm" variant="outline" onClick={exportCodes}>
                     Export
+                </Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onRegenerate}
+                    disabled={loading}
+                >
+                    Regenerate
                 </Button>
 
             </div>
@@ -60,4 +60,5 @@ export default function RecoveryCodes({codes = []}: {
         </div>
 
     )
+
 }

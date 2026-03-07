@@ -2,12 +2,12 @@ import {useMutation, useQuery} from "@tanstack/react-query"
 import {
     confirmMfa,
     disableMfa,
-    enableMfa,
+    enableMfa, getRecoveryCodes,
     getTwoFactorMethods, regenerateRecoveryCodes,
     sendMfaChallenge
 } from "@/features/authentication/services/mfa.service.ts"
 import {verifyLogin} from "@/features/authentication/services/auth.service.ts";
-import type {ApiError} from "@/lib/types.ts";
+import type {ApiError, MfaType} from "@/lib/types.ts";
 
 export const useVerifyLogin = () =>
     useMutation<
@@ -35,7 +35,7 @@ export const useEnableMfa = () =>
 
 export const useConfirmMfa = () =>
     useMutation({
-        mutationFn: ({ type, code }: { type: string; code: string }) =>
+        mutationFn: ({ type, code }: { type: MfaType; code: string }) =>
             confirmMfa(type, code)
     })
 
@@ -53,4 +53,9 @@ export const useTwoFactorMethods = () =>
 export const useRegenerateRecoveryCodes = () =>
     useMutation({
         mutationFn: regenerateRecoveryCodes
+    })
+
+export const useRecoveryCodes = () =>
+    useMutation({
+        mutationFn: getRecoveryCodes
     })

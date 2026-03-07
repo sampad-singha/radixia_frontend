@@ -82,3 +82,18 @@ export const logout = async () => {
     await api.post("/v1/auth/logout")
     localStorage.removeItem("token")
 }
+
+export const updatePassword = async (
+    current_password: string,
+    password: string,
+    password_confirmation: string
+) => {
+
+    const res = await api.post("/v1/auth/change-password", {
+        current_password,
+        password,
+        password_confirmation
+    })
+
+    return res.data
+}
