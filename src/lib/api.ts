@@ -1,5 +1,6 @@
 import axios from "axios"
 import type {ApiError} from "@/lib/types.ts";
+import { sudoBus } from "./sudoBus"
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -35,6 +36,19 @@ api.interceptors.response.use(
             errors: data?.errors ?? {},
             status,
             data
+        }
+
+        if (normalized.code === "SUDO_REQUIRED") {
+
+            const methods =
+                (normalized.data as { available_methods?: ("password" | "email" | "totp")[] })
+                    ?.available_methods ?? ["password"]
+
+            return new Promise((_, reject) => {
+
+                sudoBus.trigger(error.config, methods, reject)
+
+            })
         }
 
         return Promise.reject(normalized)

@@ -1,15 +1,21 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
-export default function RecoveryCodes({
-                                          codes = []
-                                      }: {
+export default function RecoveryCodes({codes = []}: {
     codes?: string[]
 }) {
+    const [copied, setCopied] = useState(false)
 
     if (!codes.length) return null
 
     const copyCodes = () => {
         navigator.clipboard.writeText(codes.join("\n"))
+
+        setCopied(true)
+
+        setTimeout(() => {
+            setCopied(false)
+        }, 2000)
     }
 
     const exportCodes = () => {
@@ -42,7 +48,7 @@ export default function RecoveryCodes({
             <div className="flex gap-2">
 
                 <Button size="sm" onClick={copyCodes}>
-                    Copy
+                    {copied ? "Copied" : "Copy"}
                 </Button>
 
                 <Button size="sm" variant="outline" onClick={exportCodes}>

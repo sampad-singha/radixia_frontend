@@ -25,3 +25,5 @@ export type RegisterResponse = {
         email: string
     }
 }
+
+export type MfaType = "email" | "totp"

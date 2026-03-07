@@ -8,18 +8,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 import { useRegenerateRecoveryCodes } from "@/features/authentication/queries/mfa.queries"
+import type {MfaType} from "@/lib/types.ts";
 
 export default function PrivacySecurityPage() {
 
-    const { data: methods, isLoading } = useTwoFactorMethods()
-    const regenerateMutation = useRegenerateRecoveryCodes()
+    type TwoFactorMethod = {
+        type: MfaType
+        confirmed_at: string | null
+        is_default: boolean
+    }
 
+    const { data: methods, isLoading } =
+        useTwoFactorMethods() as {
+            data: TwoFactorMethod[]
+            isLoading: boolean
+        }
+    const regenerateMutation = useRegenerateRecoveryCodes()
     const [recoveryCodes, setRecoveryCodes] = useState<string[] | null>(null)
 
     if (isLoading) return null
 
     const confirmedMethods =
         methods?.filter((m) => m.confirmed_at !== null) ?? []
+
+    const enabledTypes = confirmedMethods.map(m => m.type)
+    const availableMethods = ["email", "totp"].filter(
+        method => !enabledTypes.includes(method)
+    )
 
     const handleRegenerateCodes = () => {
 
@@ -156,7 +171,9 @@ export default function PrivacySecurityPage() {
 
                     {/* Enable new MFA method */}
 
-                    <EnableMfa />
+                    {availableMethods.length > 0 && (
+                        <EnableMfa disabledTypes={enabledTypes} />
+                    )}
 
                 </CardContent>
 
