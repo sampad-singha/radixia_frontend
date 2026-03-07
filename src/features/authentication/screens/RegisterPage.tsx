@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import type { ApiError } from "@/lib/types"
+import {useNavigate} from "react-router-dom";
+import {useQueryClient} from "@tanstack/react-query";
 
 export default function RegisterPage() {
 
     const registerMutation = useRegister()
-
+    const navigate = useNavigate()
     const [error, setError] = useState<string | null>(null)
+    const queryClient = useQueryClient()
 
     const [form, setForm] = useState({
         name: "",
@@ -31,6 +34,15 @@ export default function RegisterPage() {
                 password_confirmation: form.password_confirmation
             },
             {
+                onSuccess: async () => {
+
+                    await queryClient.invalidateQueries({
+                        queryKey: ["user"]
+                    })
+
+                    navigate("/profile")
+                },
+
                 onError: (error: ApiError) => {
 
                     if (error.code === "VALIDATION_ERROR") {

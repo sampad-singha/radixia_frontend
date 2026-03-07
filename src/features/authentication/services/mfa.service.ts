@@ -57,3 +57,11 @@ export const regenerateRecoveryCodes = async (): Promise<string[]> => {
     return res.data.data.recovery_codes
 
 }
+
+export const getRecoveryCodes = async (): Promise<string[]> => {
+
+    const res = await api.get("/v1/auth/two-factor/recovery-codes")
+
+    return res.data.data.recovery_codes
+
+}

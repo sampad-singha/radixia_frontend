@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query"
 import {
     confirmMfa,
     disableMfa,
-    enableMfa,
+    enableMfa, getRecoveryCodes,
     getTwoFactorMethods, regenerateRecoveryCodes,
     sendMfaChallenge
 } from "@/features/authentication/services/mfa.service.ts"
@@ -53,4 +53,9 @@ export const useTwoFactorMethods = () =>
 export const useRegenerateRecoveryCodes = () =>
     useMutation({
         mutationFn: regenerateRecoveryCodes
+    })
+
+export const useRecoveryCodes = () =>
+    useMutation({
+        mutationFn: getRecoveryCodes
     })

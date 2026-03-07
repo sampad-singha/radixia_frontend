@@ -1,6 +1,7 @@
 import axios from "axios"
 import type {ApiError} from "@/lib/types.ts";
 import { sudoBus } from "./sudoBus"
+import {verifiedBus} from "@/lib/verifiedBus.ts";
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -49,6 +50,13 @@ api.interceptors.response.use(
                 sudoBus.trigger(error.config, methods, reject)
 
             })
+        }
+
+        if (normalized.code === "EMAIL_NOT_VERIFIED") {
+
+            verifiedBus.trigger()
+
+            return Promise.reject(normalized)
         }
 
         return Promise.reject(normalized)
