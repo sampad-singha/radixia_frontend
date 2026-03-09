@@ -1,7 +1,11 @@
 import TwoFactorSection from "@/features/dashboard/components/TwoFactorSection.tsx";
 import ChangePasswordSection from "@/features/dashboard/components/ChangePasswordSection.tsx";
+import SetPasswordCard from "@/features/dashboard/components/SetPasswordCard.tsx";
+import {useUser} from "@/features/authentication/queries/auth.queries.ts";
 
 export default function PrivacySecurityPage() {
+
+    const { data: user } = useUser()
 
     return (
 
@@ -13,7 +17,10 @@ export default function PrivacySecurityPage() {
 
             <TwoFactorSection />
 
-            <ChangePasswordSection />
+            {user?.is_password_set
+                ? <ChangePasswordSection />
+                : <SetPasswordCard />
+            }
 
         </div>
 

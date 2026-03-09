@@ -4,6 +4,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useUpdatePassword } from "@/features/authentication/queries/auth.queries"
 import type {ApiError} from "@/lib/types.ts";
+import {toast} from "sonner";
+import {Loader2} from "lucide-react";
+import {useNavigate} from "react-router-dom";
 
 export default function ChangePasswordSection() {
 
@@ -15,22 +18,25 @@ export default function ChangePasswordSection() {
         password_confirmation: ""
     })
 
-    const [message, setMessage] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     const handleSubmit = () => {
 
         setError(null)
-        setMessage(null)
 
         mutation.mutate(form, {
             onSuccess: () => {
-                setMessage("Password updated successfully")
                 setForm({
                     current_password: "",
                     password: "",
                     password_confirmation: ""
                 })
+                toast.success("Password updated successfully", {
+                    className: "text-green-600"
+                })
+
+                navigate("/login")
             },
             onError: (error: ApiError) => {
 
@@ -54,10 +60,6 @@ export default function ChangePasswordSection() {
 
                 {error && (
                     <p className="text-sm text-destructive">{error}</p>
-                )}
-
-                {message && (
-                    <p className="text-sm text-green-600">{message}</p>
                 )}
 
                 <Input
@@ -90,11 +92,12 @@ export default function ChangePasswordSection() {
                     }
                 />
 
-                <Button
-                    onClick={handleSubmit}
-                    disabled={mutation.isPending}
-                >
-                    Update Password
+                <Button onClick={handleSubmit} disabled={mutation.isPending}>
+                    {mutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+
+                    {mutation.isPending ? "Updating..." : "Update Password"}
                 </Button>
 
             </CardContent>

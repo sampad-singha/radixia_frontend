@@ -97,3 +97,14 @@ export const updatePassword = async (
 
     return res.data
 }
+
+export const setPassword = async (
+    password: string,
+    password_confirmation: string
+) => {
+
+    await api.post("/v1/auth/set-password", {
+        password,
+        password_confirmation
+    })
+}

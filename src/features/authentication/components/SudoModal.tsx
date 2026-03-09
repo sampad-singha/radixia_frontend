@@ -22,12 +22,7 @@ import { sendMfaChallenge } from "@/features/authentication/services/mfa.service
 
 type AuthMethod = "password" | "email" | "totp"
 
-export default function SudoModal({
-                                      open,
-                                      methods,
-                                      onConfirm,
-                                      onClose
-                                  }: {
+export default function SudoModal({open, methods, onConfirm, onClose}: {
     open: boolean
     methods: AuthMethod[]
     onConfirm: (type: AuthMethod, value?: string) => Promise<void>
@@ -181,21 +176,6 @@ export default function SudoModal({
                         />
 
                     )}
-
-                    {/*{type && (*/}
-
-                    {/*    <Input*/}
-                    {/*        type={type === "password" ? "password" : "text"}*/}
-                    {/*        placeholder={*/}
-                    {/*            type === "password"*/}
-                    {/*                ? "Enter your password"*/}
-                    {/*                : "Enter verification code"*/}
-                    {/*        }*/}
-                    {/*        value={value}*/}
-                    {/*        onChange={(e) => setValue(e.target.value)}*/}
-                    {/*    />*/}
-
-                    {/*)}*/}
 
                     <Button
                         className="w-full"
