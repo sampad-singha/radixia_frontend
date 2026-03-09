@@ -15,6 +15,9 @@ export type LoginResponse = {
     user?: User
     mfa_required?: boolean
     available_methods?: string[]
+    default_method?: string
+    challenge_sent?: boolean
+    message?: string
 }
 
 export type RegisterResponse = {

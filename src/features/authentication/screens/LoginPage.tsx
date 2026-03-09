@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { useNavigate } from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
+import GoogleLoginButton from "@/features/authentication/components/GoogleLoginButton.tsx";
 
 export default function LoginPage() {
 
@@ -104,6 +105,7 @@ export default function LoginPage() {
                     )}
                     {loginMutation.isPending ? "Logging in..." : "Login"}
                 </Button>
+                <GoogleLoginButton />
 
             </form>
 

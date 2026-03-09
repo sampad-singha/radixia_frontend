@@ -1,14 +1,23 @@
-import { useUser } from "@/features/authentication/queries/auth.queries.ts"
-import { Button } from "@/components/ui/button.tsx"
-import { useLogout } from "@/features/authentication/queries/auth.queries.ts"
+import {useUser} from "@/features/authentication/queries/auth.queries.ts"
+import {Button} from "@/components/ui/button.tsx"
+import {useLogout} from "@/features/authentication/queries/auth.queries.ts"
 import {useNavigate} from "react-router-dom";
+import {Loader2} from "lucide-react";
 
 export default function ProfilePage() {
     const navigate = useNavigate()
-    const { data: user, isLoading } = useUser()
+    const {data: user, isLoading} = useUser()
     const logout = useLogout()
 
-    if (isLoading) return <p>Loading...</p>
+    if (isLoading)
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-muted/40">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin"/>
+                    <span>Fetching Data...</span>
+                </div>
+            </div>
+        )
 
     return (
         <div className="p-10">

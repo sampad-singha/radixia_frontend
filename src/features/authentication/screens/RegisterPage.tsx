@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react"
 import type { ApiError } from "@/lib/types"
 import {useNavigate} from "react-router-dom";
 import {useQueryClient} from "@tanstack/react-query";
+import GoogleLoginButton from "@/features/authentication/components/GoogleLoginButton.tsx";
 
 export default function RegisterPage() {
 
@@ -117,6 +118,7 @@ export default function RegisterPage() {
                     )}
                     {registerMutation.isPending ? "Creating..." : "Register"}
                 </Button>
+                <GoogleLoginButton />
 
             </form>
 
