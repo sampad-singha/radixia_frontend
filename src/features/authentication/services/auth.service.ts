@@ -123,3 +123,21 @@ export const revokeOtherSessions = async () => {
     const res = await api.delete("/v1/auth/sessions")
     return res.data
 }
+
+export const requestEmailChange = async (email: string) => {
+
+    const res = await api.post("/v1/user/email", {
+        email
+    })
+
+    return res.data
+}
+
+export const verifyEmailChange = async (code: string) => {
+
+    const res = await api.post("/v1/user/email/verify", {
+        code
+    })
+
+    return res.data
+}

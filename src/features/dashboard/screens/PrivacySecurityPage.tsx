@@ -3,6 +3,7 @@ import ChangePasswordSection from "@/features/dashboard/components/ChangePasswor
 import SetPasswordCard from "@/features/dashboard/components/SetPasswordCard.tsx";
 import {useUser} from "@/features/authentication/queries/auth.queries.ts";
 import SessionsSection from "@/features/dashboard/components/SessionsSection.tsx";
+import EmailSection from "@/features/dashboard/components/EmailSection.tsx";
 
 export default function PrivacySecurityPage() {
 
@@ -15,6 +16,8 @@ export default function PrivacySecurityPage() {
             <h1 className="text-2xl font-semibold">
                 Privacy & Security
             </h1>
+
+            <EmailSection />
 
             <TwoFactorSection />
 

@@ -5,7 +5,7 @@ import {
     getMe,
     logout,
     updatePassword,
-    setPassword, getSessions, revokeSession, revokeOtherSessions
+    setPassword, getSessions, revokeSession, revokeOtherSessions, requestEmailChange, verifyEmailChange
 } from "@/features/authentication/services/auth.service.ts"
 import type {ApiError, LoginResponse, RegisterResponse, UpdatePasswordPayload} from "@/lib/types.ts";
 
@@ -89,3 +89,17 @@ export const useRevokeOtherSessions = () =>
     useMutation({
         mutationFn: revokeOtherSessions
     })
+
+export function useRequestEmailChange() {
+
+    return useMutation({
+        mutationFn: requestEmailChange
+    })
+}
+
+export function useVerifyEmailChange() {
+
+    return useMutation({
+        mutationFn: verifyEmailChange
+    })
+}
