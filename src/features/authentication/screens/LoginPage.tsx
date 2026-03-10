@@ -2,10 +2,11 @@ import React, { useState } from "react"
 import { useLogin } from "@/features/authentication/queries/auth.queries"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useNavigate } from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 import { useQueryClient } from "@tanstack/react-query"
 import { Loader2 } from "lucide-react"
 import GoogleLoginButton from "@/features/authentication/components/GoogleLoginButton.tsx";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 
 export default function LoginPage() {
 
@@ -66,48 +67,85 @@ export default function LoginPage() {
     return (
         <div className="flex items-center justify-center min-h-screen">
 
-            <form onSubmit={handleSubmit} className="space-y-4 w-80">
+            <Card className="w-90">
 
-                <h1 className="text-xl font-semibold">Login</h1>
+                <CardHeader>
+                    <CardTitle>Login</CardTitle>
+                </CardHeader>
 
-                {error && (
-                    <p className="text-sm text-destructive">
-                        {error}
-                    </p>
-                )}
+                <CardContent>
 
-                <Input
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => {
-                        setEmail(e.target.value)
-                        setError(null)
-                    }}
-                />
+                    <form onSubmit={handleSubmit} className="space-y-4">
 
-                <Input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value)
-                        setError(null)
-                    }}
-                />
+                        {error && (
+                            <p className="text-sm text-destructive">
+                                {error}
+                            </p>
+                        )}
 
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loginMutation.isPending}
-                >
-                    {loginMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {loginMutation.isPending ? "Logging in..." : "Login"}
-                </Button>
-                <GoogleLoginButton />
+                        <Input
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value)
+                                setError(null)
+                            }}
+                        />
 
-            </form>
+                        <div className="space-y-1">
+
+                            <Input
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => {
+                                    setPassword(e.target.value)
+                                    setError(null)
+                                }}
+                            />
+
+                            <div className="text-right">
+                                <Link
+                                    to="/forgot-password"
+                                    className="text-xs text-muted-foreground hover:text-primary"
+                                >
+                                    Forgot password?
+                                </Link>
+                            </div>
+
+                        </div>
+
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={loginMutation.isPending}
+                        >
+                            {loginMutation.isPending && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+
+                            {loginMutation.isPending
+                                ? "Logging in..."
+                                : "Login"}
+                        </Button>
+
+                        <GoogleLoginButton />
+
+                        <p className="text-sm text-center text-muted-foreground">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/register"
+                                className="text-primary hover:underline"
+                            >
+                                Register
+                            </Link>
+                        </p>
+
+                    </form>
+
+                </CardContent>
+
+            </Card>
 
         </div>
     )
