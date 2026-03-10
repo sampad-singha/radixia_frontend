@@ -5,7 +5,7 @@ import {
     getMe,
     logout,
     updatePassword,
-    setPassword
+    setPassword, getSessions, revokeSession, revokeOtherSessions
 } from "@/features/authentication/services/auth.service.ts"
 import type {ApiError, LoginResponse, RegisterResponse, UpdatePasswordPayload} from "@/lib/types.ts";
 
@@ -72,4 +72,20 @@ export const useSetPassword = () =>
     }>({
         mutationFn: ({ password, password_confirmation }) =>
             setPassword(password, password_confirmation)
+    })
+
+export const useSessions = () =>
+    useQuery({
+        queryKey: ["sessions"],
+        queryFn: getSessions
+    })
+
+export const useRevokeSession = () =>
+    useMutation({
+        mutationFn: revokeSession
+    })
+
+export const useRevokeOtherSessions = () =>
+    useMutation({
+        mutationFn: revokeOtherSessions
     })

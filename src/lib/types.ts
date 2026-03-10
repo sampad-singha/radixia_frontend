@@ -36,3 +36,13 @@ export type UpdatePasswordPayload = {
     password: string
     password_confirmation: string
 }
+
+export type Session = {
+    id: number
+    name: string
+    ip_address: string
+    user_agent: string
+    last_used_at: string
+    created_at: string
+    current: boolean
+}

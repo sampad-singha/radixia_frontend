@@ -2,6 +2,7 @@ import TwoFactorSection from "@/features/dashboard/components/TwoFactorSection.t
 import ChangePasswordSection from "@/features/dashboard/components/ChangePasswordSection.tsx";
 import SetPasswordCard from "@/features/dashboard/components/SetPasswordCard.tsx";
 import {useUser} from "@/features/authentication/queries/auth.queries.ts";
+import SessionsSection from "@/features/dashboard/components/SessionsSection.tsx";
 
 export default function PrivacySecurityPage() {
 
@@ -21,6 +22,8 @@ export default function PrivacySecurityPage() {
                 ? <ChangePasswordSection />
                 : <SetPasswordCard />
             }
+
+            <SessionsSection />
 
         </div>
 

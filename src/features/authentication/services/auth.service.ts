@@ -1,5 +1,5 @@
 import { api } from "@/lib/api.ts"
-import type {LoginResponse} from "@/lib/types.ts";
+import type {LoginResponse, Session} from "@/lib/types.ts";
 
 export const login = async (
     email: string,
@@ -107,4 +107,19 @@ export const setPassword = async (
         password,
         password_confirmation
     })
+}
+
+export const getSessions = async (): Promise<Session[]> => {
+    const res = await api.get("/v1/auth/sessions")
+    return res.data.data
+}
+
+export const revokeSession = async (sessionId: number) => {
+    const res = await api.delete(`/v1/auth/sessions/${sessionId}`)
+    return res.data
+}
+
+export const revokeOtherSessions = async () => {
+    const res = await api.delete("/v1/auth/sessions")
+    return res.data
 }
