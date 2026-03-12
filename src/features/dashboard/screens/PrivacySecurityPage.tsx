@@ -11,7 +11,7 @@ export default function PrivacySecurityPage() {
 
     return (
 
-        <div className="space-y-8">
+        <div className="space-y-8 px-4">
 
             <h1 className="text-2xl font-semibold">
                 Privacy & Security

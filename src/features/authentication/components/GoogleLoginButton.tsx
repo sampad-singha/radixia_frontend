@@ -27,7 +27,7 @@ export default function GoogleLoginButton() {
         <Button
             type="button"
             variant="outline"
-            className="w-full flex items-center justify-center gap-3 bg-white text-black border hover:bg-gray-50"
+            className="w-full flex items-center justify-center gap-3"
             onClick={login}
         >
             <svg
