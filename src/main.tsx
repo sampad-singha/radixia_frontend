@@ -14,8 +14,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <ThemeProvider
             attribute="class"
-            // defaultTheme="dark"
-            defaultTheme="system"
+            defaultTheme="dark"
+            // defaultTheme="system"
             enableSystem
             storageKey="radixia-theme"
             disableTransitionOnChange

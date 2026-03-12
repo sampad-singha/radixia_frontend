@@ -29,6 +29,7 @@ import {
     useRequestEmailChange,
     useVerifyEmailChange
 } from "@/features/authentication/queries/auth.queries"
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 
 export default function EmailSection() {
@@ -118,7 +119,29 @@ export default function EmailSection() {
     }
 
 
-    if (!user) return null
+    if (!user) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Email</CardTitle>
+                </CardHeader>
+
+                <CardContent className="flex items-center justify-between">
+
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-3 w-20" />
+                    </div>
+
+                    <div className="flex gap-2">
+                        <Skeleton className="h-8 w-32" />
+                        <Skeleton className="h-8 w-28" />
+                    </div>
+
+                </CardContent>
+            </Card>
+        )
+    }
 
 
     return (

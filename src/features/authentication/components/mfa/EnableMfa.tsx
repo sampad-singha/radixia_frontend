@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import {useState} from "react"
+import {Button} from "@/components/ui/button"
 import {
     Select,
     SelectContent,
@@ -7,12 +7,21 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEnableMfa } from "@/features/authentication/queries/mfa.queries"
-
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {useEnableMfa} from "@/features/authentication/queries/mfa.queries"
 import ConfirmMfa from "./ConfirmMfa"
 import RecoveryCodes from "./RecoveryCodes"
-import type { MfaType } from "@/lib/types"
+import type {MfaType} from "@/lib/types"
+import {Skeleton} from "@/components/ui/skeleton"
+
+function EmailSkeleton() {
+    return (
+        <div className="space-y-4">
+            <Skeleton className="h-10 w-full"/>
+            <Skeleton className="h-10 w-40"/>
+        </div>
+    )
+}
 
 export default function EnableMfa({
                                       disabledTypes = []
@@ -33,6 +42,7 @@ export default function EnableMfa({
     )
 
     const [setupData, setSetupData] = useState<any>(null)
+    const [qrLoaded, setQrLoaded] = useState(false)
 
     const selectedType = availableMethods.includes(type)
         ? type
@@ -47,41 +57,25 @@ export default function EnableMfa({
                 setSetupData(data)
             }
         })
-
     }
 
-    if (setupData) {
-
+    function TotpSkeleton() {
         return (
             <div className="space-y-6">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-32"/>
+                    <Skeleton className="h-[200px] w-[200px]"/>
+                </div>
 
-                {setupData.qr_code_url && (
-                    <div className="space-y-2">
-                        <p className="text-sm font-medium">Scan QR Code</p>
-                        <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.qr_code_url)}`}
-                            alt="QR Code"
-                        />
-                    </div>
-                )}
+                <Skeleton className="h-4 w-64"/>
 
-                {setupData.secret && (
-                    <p className="text-sm">
-                        Secret: <span className="font-mono">{setupData.secret}</span>
-                    </p>
-                )}
+                <Skeleton className="h-10 w-full"/>
 
-                <ConfirmMfa
-                    type={selectedType}
-                    onConfirmed={() => {
-                        setSetupData(null)
-                    }}
-                />
-
-                {setupData.recovery_codes && (
-                    <RecoveryCodes codes={setupData.recovery_codes} />
-                )}
-
+                <div className="grid grid-cols-2 gap-2">
+                    {[1, 2, 3, 4].map((i) => (
+                        <Skeleton key={i} className="h-6 w-full"/>
+                    ))}
+                </div>
             </div>
         )
     }
@@ -89,55 +83,113 @@ export default function EnableMfa({
     if (availableMethods.length === 0) return null
 
     return (
-
         <Card>
 
             <CardHeader>
                 <CardTitle>Enable Two-Factor Authentication</CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
 
-                <Select
-                    value={selectedType}
-                    onValueChange={(value) =>
-                        setType(value as MfaType)
-                    }
-                    disabled={availableMethods.length === 1}
-                >
+                {enableMutation.isPending && (
+                    selectedType === "totp"
+                        ? <TotpSkeleton/>
+                        : <EmailSkeleton/>
+                )}
 
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select MFA Method" />
-                    </SelectTrigger>
+                {!enableMutation.isPending && setupData && (
+                    <div className="space-y-6">
 
-                    <SelectContent>
+                        {setupData.qr_code_url && (
+                            <div className="space-y-2">
 
-                        {availableMethods.includes("totp") && (
-                            <SelectItem value="totp">
-                                Authenticator App
-                            </SelectItem>
+                                <p className="text-sm font-medium">
+                                    Scan QR Code
+                                </p>
+
+                                <div className="relative w-[200px] h-[200px]">
+
+                                    {!qrLoaded && (
+                                        <Skeleton className="absolute inset-0 h-[200px] w-[200px]"/>
+                                    )}
+
+                                    <img
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(setupData.qr_code_url)}`}
+                                        alt="QR Code"
+                                        className={`w-[200px] h-[200px] ${qrLoaded ? "opacity-100" : "opacity-0"}`}
+                                        onLoad={() => setQrLoaded(true)}
+                                    />
+
+                                </div>
+
+                            </div>
                         )}
 
-                        {availableMethods.includes("email") && (
-                            <SelectItem value="email">
-                                Email Code
-                            </SelectItem>
+                        {setupData.secret && (
+                            <p className="text-sm">
+                                Secret: <span className="font-mono">{setupData.secret}</span>
+                            </p>
                         )}
 
-                    </SelectContent>
+                        <ConfirmMfa
+                            type={selectedType}
+                            onConfirmed={() => {
+                                setSetupData(null)
+                            }}
+                        />
 
-                </Select>
+                        {setupData.recovery_codes && (
+                            <RecoveryCodes codes={setupData.recovery_codes}/>
+                        )}
 
-                <Button
-                    onClick={handleEnable}
-                    disabled={enableMutation.isPending}
-                >
-                    Enable MFA
-                </Button>
+                    </div>
+                )}
+
+                {!enableMutation.isPending && !setupData && (
+                    <>
+
+                        <Select
+                            value={selectedType}
+                            onValueChange={(value) =>
+                                setType(value as MfaType)
+                            }
+                            disabled={availableMethods.length === 1}
+                        >
+
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select MFA Method"/>
+                            </SelectTrigger>
+
+                            <SelectContent>
+
+                                {availableMethods.includes("totp") && (
+                                    <SelectItem value="totp">
+                                        Authenticator App
+                                    </SelectItem>
+                                )}
+
+                                {availableMethods.includes("email") && (
+                                    <SelectItem value="email">
+                                        Email Code
+                                    </SelectItem>
+                                )}
+
+                            </SelectContent>
+
+                        </Select>
+
+                        <Button
+                            onClick={handleEnable}
+                            disabled={enableMutation.isPending}
+                        >
+                            Enable MFA
+                        </Button>
+
+                    </>
+                )}
 
             </CardContent>
 
         </Card>
-
     )
 }

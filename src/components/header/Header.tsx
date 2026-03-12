@@ -8,7 +8,7 @@ export function Header() {
     const { toggleSidebar } = useSidebar()
 
     return (
-        <header className="flex h-16 items-center justify-between border-b px-6 z-40 bg-background/95 backdrop-blur">
+        <header className="sticky top-0 flex h-16 items-center justify-between border-b px-6 z-40 bg-background/95 backdrop-blur">
             <input
                 type="text"
                 name="username"

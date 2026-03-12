@@ -20,6 +20,7 @@ import {
 import {parseUserAgent} from "@/lib/userAgent"
 import {formatSessionTime} from "@/lib/time"
 import {useState} from "react";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 export default function SessionsSection() {
 
@@ -76,9 +77,28 @@ export default function SessionsSection() {
             <CardContent className="space-y-4">
 
                 {isLoading && (
-                    <div className="flex justify-center py-6">
-                        <Loader2 className="h-6 w-6 animate-spin"/>
-                    </div>
+                    <>
+                        {[1,2,3].map((i) => (
+                            <div
+                                key={i}
+                                className="flex items-center justify-between border rounded-lg p-4"
+                            >
+                                <div className="flex gap-3 w-full">
+
+                                    <Skeleton className="h-5 w-5 rounded" />
+
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton className="h-4 w-64" />
+                                        <Skeleton className="h-3 w-40" />
+                                        <Skeleton className="h-3 w-32" />
+                                    </div>
+
+                                </div>
+
+                                <Skeleton className="h-8 w-20" />
+                            </div>
+                        ))}
+                    </>
                 )}
 
                 {sessions.map((session) => {

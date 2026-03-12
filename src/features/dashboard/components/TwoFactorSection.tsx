@@ -11,6 +11,7 @@ import RecoveryCodesCard from "./RecoveryCodesCard"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { MfaType } from "@/lib/types"
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
 type TwoFactorMethod = {
     type: MfaType
@@ -52,7 +53,45 @@ export default function TwoFactorSection() {
 
     const regenerateMutation = useRegenerateRecoveryCodes()
 
-    if (isLoading) return null
+    if (isLoading) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Two-Factor Authentication</CardTitle>
+                </CardHeader>
+
+                <CardContent className="space-y-6">
+
+                    {/* Enabled MFA methods */}
+                    <div className="space-y-4">
+                        {[1,2].map((i) => (
+                            <div
+                                key={i}
+                                className="border p-4 rounded-md flex items-center justify-between"
+                            >
+                                <div className="space-y-2">
+                                    <Skeleton className="h-4 w-40" />
+                                    <Skeleton className="h-3 w-28" />
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-8 w-32" />
+                                    <Skeleton className="h-8 w-20" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Enable MFA section */}
+                    <div className="space-y-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-36" />
+                    </div>
+
+                </CardContent>
+            </Card>
+        )
+    }
 
     const confirmedMethods =
         methods?.filter((m) => m.confirmed_at !== null) ?? []
