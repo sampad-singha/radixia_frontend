@@ -1,8 +1,8 @@
-import { Star, Clock, ListVideo } from "lucide-react"
+import {Star, Clock, ListVideo, BarChart} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router-dom"
 
-export default function ProgramCard() {
+export default function ProgramCard({ item }: any) {
   return (
     <Link
       to="/programs/laravel-advanced-patterns"
@@ -13,8 +13,8 @@ export default function ProgramCard() {
 
         {/* Thumbnail */}
         <img
-          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=900"
-          alt="Laravel Advanced Patterns"
+          src={item.thumbnail_url}
+          alt={item.title}
           className="w-64 h-40 object-cover flex-shrink-0"
         />
 
@@ -25,24 +25,23 @@ export default function ProgramCard() {
           <div className="flex items-start justify-between">
 
             <h3 className="text-lg font-semibold leading-tight">
-              Laravel Advanced Patterns
+              {item.title}
             </h3>
 
             <span className="text-l font-bold">
-              BDT 12500
+              BDT {item.price}
             </span>
 
           </div>
 
           {/* Short description */}
           <p className="text-sm text-muted-foreground line-clamp-2">
-            Deep dive into Domain-Driven Design, Hexagonal architecture,
-            and scalable Laravel design patterns used in production systems.
+            {item.short_description}
           </p>
 
           {/* Instructors */}
           <p className="text-sm text-muted-foreground">
-            John Doe • Jane Smith
+            {item.instructor.name}
           </p>
 
           {/* Rating */}
@@ -50,11 +49,11 @@ export default function ProgramCard() {
 
             <div className="flex items-center gap-1 text-amber-500 font-medium">
               <Star className="w-4 h-4 fill-amber-500" />
-              4.8
+              {item.rating}
             </div>
 
             <span className="text-muted-foreground">
-              (1,245 ratings)
+              ({item.rating_count} ratings)
             </span>
 
           </div>
@@ -64,12 +63,17 @@ export default function ProgramCard() {
 
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
-              18 hrs
+              {item.duration_hours} hours
             </div>
 
             <div className="flex items-center gap-1">
               <ListVideo className="w-4 h-4" />
-              42 lessons
+              {item.lesson_count} lessons
+            </div>
+
+            <div className="flex items-center gap-1">
+              <BarChart className="w-4 h-4" />
+              {item.level}
             </div>
 
           </div>

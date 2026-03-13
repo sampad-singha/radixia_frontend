@@ -1,17 +1,47 @@
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import React, {useEffect, useState} from "react"
+import {Input} from "@/components/ui/input"
+import {Search} from "lucide-react"
+import type {ExploreParams} from "../types/explore.types"
 
-export default function ExploreSearch() {
-  return (
-    <div className="relative max-w-md">
+type Props = {
+    params: ExploreParams
+    setParams: React.Dispatch<React.SetStateAction<ExploreParams>>
+}
 
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+export default function ExploreSearch({params, setParams}: Props) {
 
-      <Input
-        placeholder="Search programs, courses, bootcamps..."
-        className="pl-9"
-      />
+    const [value, setValue] = useState(params.q ?? "")
 
-    </div>
-  )
+    useEffect(() => {
+        const timer = setTimeout(() => {
+
+            setParams(prev => ({
+                ...prev,
+                q: value || undefined,
+                page: 1
+            }))
+
+        }, 400)
+
+        return () => clearTimeout(timer)
+
+    }, [value, setParams])
+
+    return (
+
+        <div className="relative max-w-md w-full">
+
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
+
+            <Input
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="Search programs, courses, bootcamps..."
+                className="pl-9"
+            />
+
+        </div>
+
+    )
+
 }

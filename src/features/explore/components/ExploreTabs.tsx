@@ -1,27 +1,49 @@
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button"
+import React from "react";
+import type {ExploreParams} from "@/features/explore/types/explore.types.ts";
 
-const tabs = [
-  { label: "All", value: "all" },
-  { label: "Programs", value: "program" },
-  { label: "Courses", value: "course" },
-  { label: "Bootcamps", value: "bootcamp" },
-  { label: "Specializations", value: "specialization" }
+type Props = {
+    params: ExploreParams
+    setParams: React.Dispatch<React.SetStateAction<ExploreParams>>
+}
+
+const tabs: { label: string; value: NonNullable<ExploreParams["type"]> }[] = [
+    {label: "All", value: "all"},
+    {label: "Programs", value: "program"},
+    {label: "Courses", value: "course"},
+    {label: "Bootcamps", value: "bootcamp"},
+    {label: "Specializations", value: "specialization"}
 ]
 
-export default function ExploreTabs() {
-  return (
-    <div className="flex gap-2 flex-wrap">
+export default function ExploreTabs({params, setParams}: Props) {
 
-      {tabs.map(tab => (
-        <Button
-          key={tab.value}
-          variant="outline"
-          size="sm"
-        >
-          {tab.label}
-        </Button>
-      ))}
+    const currentType = params.type ?? "all"
 
-    </div>
-  )
+    const changeType = (type: NonNullable<ExploreParams["type"]>) => {
+        setParams(prev => ({
+            ...prev,
+            type,
+            page: 1
+        }))
+    }
+
+    return (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+
+            {tabs.map(tab => (
+
+                <Button
+                    key={tab.value}
+                    size="sm"
+                    variant={currentType === tab.value ? "default" : "outline"}
+                    onClick={() => changeType(tab.value)}
+                >
+                    {tab.label}
+                </Button>
+
+            ))}
+
+        </div>
+    )
+
 }
