@@ -5,6 +5,8 @@ import ExploreFilters from "@/components/features/explore/ExploreFilters.tsx";
 import {useState} from "react";
 import type {ExplorePaginator, ExploreParams} from "@/lib/types/explore.types.ts";
 import {useExplore} from "@/queries/explore.queries.ts";
+import ExploreSort from "@/components/features/explore/ExploreSort.tsx";
+import {Separator} from "@/components/ui/separator.tsx";
 
 export default function ExplorePage() {
 
@@ -30,28 +32,22 @@ export default function ExplorePage() {
         : 0
 
     return (
-        <div className="space-y-6 px-4 w-full max-w-6xl mx-auto py-6">
+        <div className="space-y-6 px-4 w-full max-w-7xl mx-auto py-6">
 
             <h1 className="text-2xl font-semibold">
                 Explore
             </h1>
 
-            {/* Search + Filter Row */}
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-center gap-4">
 
                 <ExploreSearch
                     params={params}
                     setParams={setParams}
                 />
 
-                <ExploreFilters
-                    params={params}
-                    setParams={setParams}
-                />
-
             </div>
 
-            {/* Tabs */}
+            {/* Tabs + Result Count */}
             <div className="flex items-center justify-between">
 
                 <ExploreTabs
@@ -65,16 +61,40 @@ export default function ExplorePage() {
                     </p>
                 )}
 
+                <ExploreSort
+                    params={params}
+                    setParams={setParams}
+                />
+
             </div>
 
+            <Separator />
 
-            {/* Results */}
-            <ExploreGrid
-                params={params}
-                setParams={setParams}
-                data={data}
-                isLoading={isLoading}
-            />
+            <div className="grid grid-cols-12 gap-8">
+
+                {/* Filters */}
+                <aside className="col-span-3">
+
+                    <ExploreFilters
+                        params={params}
+                        setParams={setParams}
+                    />
+
+                </aside>
+
+                {/* Results */}
+                <main className="col-span-9">
+
+                    <ExploreGrid
+                        params={params}
+                        setParams={setParams}
+                        data={data}
+                        isLoading={isLoading}
+                    />
+
+                </main>
+
+            </div>
 
         </div>
     )

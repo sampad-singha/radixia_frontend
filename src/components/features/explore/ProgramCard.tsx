@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 export default function ProgramCard({ item }: any) {
   return (
       <Link
-          to={`/explore/program/${item.slug}`}
+          to={`/program/${item.slug}`}
           className="block group"
       >
 
@@ -73,7 +73,7 @@ export default function ProgramCard({ item }: any) {
 
             <div className="flex items-center gap-1">
               <BarChart className="w-4 h-4" />
-              {item.level}
+              <span className="capitalize">{item.level}</span>
             </div>
 
           </div>

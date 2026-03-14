@@ -63,11 +63,13 @@ export default function ExploreGrid({ data, isLoading, params, setParams }: any)
                 ))}
             </div>
 
-            <ExplorePagination
-                meta={data}
-                params={params}
-                setParams={setParams}
-            />
+            <div className="mt-6">
+                <ExplorePagination
+                    meta={data}
+                    params={params}
+                    setParams={setParams}
+                />
+            </div>
         </>
     )
 }
