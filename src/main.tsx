@@ -6,7 +6,7 @@ import {ReactQueryDevtools} from "@tanstack/react-query-devtools"
 import {queryClient} from "./lib/query-client"
 import {AuthProvider} from "@/context/AuthContext.tsx";
 import "./index.css"
-import {VerifyProvider} from "@/features/authentication/context/VerifyEmailContext.tsx";
+import {VerifyProvider} from "@/context/VerifyEmailContext.tsx";
 import {ThemeProvider} from "next-themes";
 import {TooltipProvider} from "@/components/ui/tooltip.tsx";
 

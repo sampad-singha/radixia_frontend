@@ -1,9 +1,9 @@
 import {BrowserRouter, useRoutes} from "react-router-dom"
 
-import {authRoutes} from "@/features/authentication/routes/auth.routes"
-import {profileRoutes} from "@/features/profile/routes/profile.routes.tsx";
-import {publicRoutes} from "@/features/public/routes/public.routes.tsx";
-import {dashboardRoutes} from "@/features/dashboard/routes/dashboardRoutes.tsx";
+import {authRoutes} from "@/router/auth.routes.tsx"
+import {profileRoutes} from "@/router/profile.routes.tsx";
+import {publicRoutes} from "@/router/public.routes.tsx";
+import {dashboardRoutes} from "@/router/dashboardRoutes.tsx";
 
 function AppRouter() {
     return useRoutes([

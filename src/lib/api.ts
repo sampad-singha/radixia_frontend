@@ -1,7 +1,7 @@
 import axios from "axios"
-import type {ApiError} from "@/lib/types.ts";
-import { sudoBus } from "./sudoBus"
-import {verifiedBus} from "@/lib/verifiedBus.ts";
+import type {ApiError} from "@/lib/types/types.ts";
+import { sudoBus } from "./bus/sudoBus.ts"
+import {verifiedBus} from "@/lib/bus/verifiedBus.ts";
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
