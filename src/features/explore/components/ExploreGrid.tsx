@@ -1,29 +1,73 @@
 import ProgramCard from "./ProgramCard"
-import { useExplore } from "@/features/explore/queries/explore.queries"
-import type { ExploreParams } from "@/features/explore/types/explore.types"
+import ExplorePagination from "@/features/explore/components/ExplorePagination.tsx";
+import {Skeleton} from "@/components/ui/skeleton.tsx";
+export default function ExploreGrid({ data, isLoading, params, setParams }: any) {
 
-type Props = {
-  params: ExploreParams
-}
+    if (isLoading && !data) {
+        return (
+            <div className="space-y-4">
 
-export default function ExploreGrid({ params }: Props) {
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex items-start gap-5 px-4 py-4 border-b">
 
-  const { data, isLoading } = useExplore(params)
+                        {/* Thumbnail */}
+                        <Skeleton className="w-64 h-40 flex-shrink-0" />
 
-  if (isLoading) {
-    return <p>Loading...</p>
-  }
+                        {/* Content */}
+                        <div className="flex flex-col flex-1 gap-3">
 
-  return (
-      <div className="space-y-4">
+                            {/* Title + price */}
+                            <div className="flex justify-between">
+                                <Skeleton className="h-5 w-2/3" />
+                                <Skeleton className="h-5 w-16" />
+                            </div>
 
-        {(data?.data ?? []).map(item => (
-            <ProgramCard
-                key={item.id}
-                item={item}
+                            {/* Description */}
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-3/4" />
+
+                            {/* Instructor */}
+                            <Skeleton className="h-4 w-40" />
+
+                            {/* Stats */}
+                            <div className="flex gap-4">
+                                <Skeleton className="h-4 w-20" />
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-4 w-20" />
+                            </div>
+
+                        </div>
+
+                    </div>
+                ))}
+
+            </div>
+        )
+    }
+
+    const items = data?.data || []
+
+    if (!items.length) {
+        return (
+            <div className="py-16 text-center text-muted-foreground">
+                No programs found.
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <div className="space-y-4">
+                {items.map(item => (
+                    <ProgramCard key={item.id} item={item} />
+                ))}
+            </div>
+
+            <ExplorePagination
+                meta={data}
+                params={params}
+                setParams={setParams}
             />
-        ))}
-
-      </div>
-  )
+        </>
+    )
 }
