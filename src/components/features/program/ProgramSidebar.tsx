@@ -30,7 +30,7 @@ export default function ProgramSidebar() {
             <div className="aspect-video bg-black rounded-lg overflow-hidden border">
                 <iframe
                     className="w-full h-full"
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                    src="https://www.youtube.com/embed/x-dQw4w9WgXcQ"
                     title="Course preview"
                     allowFullScreen
                 />

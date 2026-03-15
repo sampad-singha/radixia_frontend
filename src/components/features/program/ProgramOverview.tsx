@@ -1,8 +1,6 @@
-import { CheckCircle2, AlertCircle, User2, Target } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import {CheckCircle2, AlertCircle, Target, ChevronUp, ChevronDown} from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import {useLayoutEffect, useRef, useState} from "react";
 
 const learningOutcomes = [
     "Apply Domain-Driven Design principles to real Laravel projects",
@@ -80,62 +78,106 @@ export default function ProgramOverview() {
             <Separator />
 
             {/* Course Description */}
-            <section>
-                <h2 className="text-xl font-semibold mb-3">About this course</h2>
-                <div className="text-sm text-muted-foreground leading-relaxed space-y-3">
-                    <p>
-                        This is not another CRUD tutorial. This course tackles the real challenge most Laravel developers hit
-                        around year two — when the codebase gets large enough that simple MVC patterns start breaking down.
-                        You need architectural thinking, and this course gives you exactly that.
-                    </p>
-                    <p>
-                        We cover Domain-Driven Design from first principles, then apply it specifically to Laravel's ecosystem.
-                        You'll implement bounded contexts, aggregates, domain events, and repositories — and you'll see how
-                        these concepts map onto real Laravel code, not just theory.
-                    </p>
-                    <p>
-                        Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
-                        using everything you've learned. All code is available on GitHub, and every decision is explained with
-                        trade-offs in mind.
-                    </p>
-                </div>
-            </section>
+            <CourseDescription />
 
             <Separator />
-
-            {/* Instructor */}
-            <section>
-                <h2 className="text-xl font-semibold mb-4">Your instructor</h2>
-                <Card className="shadow-none">
-                    <CardContent className="p-5">
-                        <div className="flex items-start gap-4">
-                            <Avatar className="w-16 h-16 border">
-                                <AvatarImage src="/placeholder-instructor.jpg" alt="Mehedi Hasan" />
-                                <AvatarFallback className="text-lg font-semibold">MH</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex flex-wrap items-center gap-2 mb-1">
-                                    <p className="font-semibold text-base">Mehedi Hasan</p>
-                                    <Badge variant="secondary" className="text-xs">Lead Instructor</Badge>
-                                </div>
-                                <p className="text-sm text-muted-foreground mb-3">
-                                    Senior Software Engineer · Laravel Core Contributor · DDD Practitioner
-                                </p>
-                                <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground mb-3">
-                                    <span>⭐ 4.9 instructor rating</span>
-                                    <span>👥 12,400+ students</span>
-                                    <span>🎓 6 courses</span>
-                                </div>
-                                <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Mehedi has spent 8+ years building production Laravel applications for startups and enterprises.
-                                    He's passionate about clean code, architectural patterns, and making advanced concepts
-                                    accessible to working developers. His courses are known for their practical depth and zero fluff.
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </section>
         </div>
+    )
+}
+
+function CourseDescription() {
+    const [expanded, setExpanded] = useState(false)
+    const [height, setHeight] = useState(0)
+    const contentRef = useRef<HTMLDivElement>(null)
+
+    useLayoutEffect(() => {
+        if (contentRef.current) {
+            setHeight(contentRef.current.scrollHeight)
+        }
+    }, [])
+
+    return (
+        <section>
+            <h2 className="text-xl font-semibold mb-3">About this course</h2>
+
+            <div className="relative">
+
+                <div
+                    style={{ height: expanded ? height : 160 }}
+                    className="overflow-hidden transition-[height] duration-500 ease-in-out"
+                >
+                    <div
+                        ref={contentRef}
+                        className="text-sm text-muted-foreground leading-relaxed space-y-3"
+                    >
+                        <p>
+                            This is not another CRUD tutorial. This course tackles the real challenge most Laravel developers hit
+                            around year two — when the codebase gets large enough that simple MVC patterns start breaking down.
+                            You need architectural thinking, and this course gives you exactly that. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind.
+                        </p>
+
+                        <p>
+                            We cover Domain-Driven Design from first principles, then apply it specifically to Laravel's ecosystem.
+                            You'll implement bounded contexts, aggregates, domain events, and repositories — and you'll see how
+                            these concepts map onto real Laravel code, not just theory. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind.
+                        </p>
+
+                        <p>
+                            Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind.
+                        </p>
+
+                        <p>
+                            Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind.
+                        </p>
+
+                        <p>
+                            Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind. Every module builds on the last, culminating in a fully-structured multi-tenant SaaS application built
+                            using everything you've learned. All code is available on GitHub, and every decision is explained with
+                            trade-offs in mind.
+                        </p>
+                    </div>
+                </div>
+
+                {!expanded && (
+                    <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background to-transparent" />
+                )}
+
+            </div>
+
+            <div className="flex justify-center mt-3">
+                <button
+                    onClick={() => setExpanded(!expanded)}
+                    className="flex items-center gap-1 text-sm font-medium text-primary"
+                >
+                    {expanded ? (
+                        <div className="cursor-pointer flex items-center gap-2">
+                            <ChevronUp className="w-4 h-4" />
+                            Show less
+                        </div>
+                    ) : (
+                        <div className="cursor-pointer flex items-center gap-2">
+                            <ChevronDown className="w-4 h-4" />
+                            See more
+                        </div>
+                    )}
+                </button>
+            </div>
+        </section>
     )
 }

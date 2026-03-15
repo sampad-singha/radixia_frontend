@@ -3,6 +3,7 @@ import ProgramHero from "@/components/features/program/ProgramHero"
 import ProgramInfoBar from "@/components/features/program/ProgramInfoBar"
 import ProgramTabs from "@/components/features/program/ProgramTabs"
 import ProgramSidebar from "@/components/features/program/ProgramSidebar"
+import Instructor from "@/components/features/program/Instructor.tsx";
 
 export default function ProgramDetailPage() {
     const { slug } = useParams()
@@ -19,6 +20,7 @@ export default function ProgramDetailPage() {
                     <div className="lg:col-span-2 space-y-8">
                         <ProgramInfoBar />
                         <ProgramTabs />
+                        <Instructor />
                     </div>
 
                     {/* Sidebar */}

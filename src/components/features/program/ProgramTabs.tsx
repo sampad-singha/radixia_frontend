@@ -14,20 +14,17 @@ export default function ProgramTabs() {
             <TabsList className="w-full justify-start border-b rounded-none bg-transparent p-0 h-auto gap-0">
                 <TabsTrigger
                     value="overview"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 pb-3 pt-0 text-sm font-medium"
-                >
+                    className="border-b-2 data-[state=active]:bg-accent px-4  py-3 text-sm font-medium">
                     Overview
                 </TabsTrigger>
                 <TabsTrigger
                     value="curriculum"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 pb-3 pt-0 text-sm font-medium"
-                >
+                    className="border-b-2 data-[state=active]:bg-accent px-4  py-3 text-sm font-medium">
                     Curriculum
                 </TabsTrigger>
                 <TabsTrigger
                     value="cohorts"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 pb-3 pt-0 text-sm font-medium"
-                >
+                    className="border-b-2 data-[state=active]:bg-accent px-4 py-3 text-sm font-medium">
                     Cohorts
                 </TabsTrigger>
             </TabsList>
