@@ -1,243 +1,309 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Separator } from "@/components/ui/separator"
-import { CalendarDays, Clock, Wifi, Users, MapPin, CheckCircle2 } from "lucide-react"
+import { CalendarDays, Clock, Users, ArrowRight } from "lucide-react"
+import { useParams } from "react-router-dom"
+import { useProgramCohorts } from "@/queries/program.queries"
+import {Skeleton} from "@/components/ui/skeleton.tsx";
 
-interface Cohort {
-    id: number
+type Cohort = {
+    id: string
     name: string
     startDate: string
-    endDate: string
-    enrollDeadline: string
-    format: "Live Online" | "Self-Paced" | "Hybrid"
-    seats: number
-    seatsLeft: number
-    schedule: string
-    timezone: string
+    endDate?: string
+    enrollDeadline?: string
+    schedule: string | null
     instructor: string
     price: number
-    originalPrice: number
-    status: "open" | "filling" | "closed" | "upcoming"
-    highlights: string[]
+    originalPrice: number | null
+    seats: number
+    seatsLeft: number
+    status: "open" | "ended"
 }
 
-const cohorts: Cohort[] = [
-    {
-        id: 1,
-        name: "Cohort 7 — April 2025",
-        startDate: "April 7, 2025",
-        endDate: "May 30, 2025",
-        enrollDeadline: "March 31, 2025",
-        format: "Live Online",
-        seats: 30,
-        seatsLeft: 6,
-        schedule: "Mon & Wed, 8:00 PM – 10:00 PM",
-        timezone: "BST (GMT+6)",
-        instructor: "Mehedi Hasan",
-        price: 300,
-        originalPrice: 450,
-        status: "filling",
-        highlights: [
-            "2 live sessions per week with Q&A",
-            "Private Discord community access",
-            "1-on-1 code review (2 sessions)",
-            "Certificate of completion",
-        ],
-    },
-    {
-        id: 2,
-        name: "Cohort 8 — June 2025",
-        startDate: "June 2, 2025",
-        endDate: "July 25, 2025",
-        enrollDeadline: "May 26, 2025",
-        format: "Live Online",
-        seats: 30,
-        seatsLeft: 30,
-        schedule: "Tue & Thu, 8:00 PM – 10:00 PM",
-        timezone: "BST (GMT+6)",
-        instructor: "Mehedi Hasan",
-        price: 300,
-        originalPrice: 450,
-        status: "upcoming",
-        highlights: [
-            "2 live sessions per week with Q&A",
-            "Private Discord community access",
-            "1-on-1 code review (2 sessions)",
-            "Certificate of completion",
-        ],
-    },
-    {
-        id: 3,
-        name: "Self-Paced — Anytime",
-        startDate: "Immediate access",
-        endDate: "Lifetime",
-        enrollDeadline: "No deadline",
-        format: "Self-Paced",
-        seats: 999,
-        seatsLeft: 999,
-        schedule: "Learn on your own schedule",
-        timezone: "Any",
-        instructor: "Mehedi Hasan (pre-recorded)",
-        price: 199,
-        originalPrice: 300,
-        status: "open",
-        highlights: [
-            "Full video curriculum access",
-            "Community forum access",
-            "All future content updates",
-            "Certificate of completion",
-        ],
-    },
-]
-
-const statusConfig: Record<Cohort["status"], { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-    open: { label: "Open", variant: "default" },
-    filling: { label: "Filling Fast", variant: "destructive" },
-    closed: { label: "Closed", variant: "secondary" },
-    upcoming: { label: "Coming Soon", variant: "outline" },
+function formatDate(dateStr: string): string {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    })
 }
 
-const formatIcon: Record<Cohort["format"], React.ElementType> = {
-    "Live Online": Wifi,
-    "Self-Paced": Clock,
-    "Hybrid": MapPin,
+function SeatsPip({ seats, seatsLeft }: { seats: number; seatsLeft: number }) {
+    const filled = seats - seatsLeft
+    const total = Math.min(seats, 10)
+    const filledCount = Math.round((filled / seats) * total)
+    const almostFull = seatsLeft <= 8 && seatsLeft > 0
+
+    return (
+        <div className="flex items-center gap-1.5 mt-4">
+            <div className="flex gap-0.5">
+                {Array.from({ length: total }).map((_, i) => (
+                    <div
+                        key={i}
+                        className={`w-1.5 h-1.5  transition-colors ${
+                            i < filledCount
+                                ? "bg-green-600"
+                                : "bg-gray-300"
+                        }`}
+                    />
+                ))}
+            </div>
+            <span className={`text-xs ms-2 ${almostFull ? "text-destructive font-medium" : "text-foreground"}`}>
+                {seatsLeft === seats
+                    ? `${seats} spots`
+                    : almostFull
+                        ? `${seatsLeft} left`
+                        : `${seatsLeft} out of ${seats} seats available.`}
+            </span>
+        </div>
+    )
 }
 
 export default function ProgramCohorts() {
-    return (
-        <div className="space-y-6">
-            <div>
-                <h2 className="text-xl font-semibold">Available Cohorts</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                    Choose between live, instructor-led cohorts or a self-paced format. All options include the same core curriculum.
-                </p>
-            </div>
+    const { slug } = useParams()
+    const { data, isLoading, isError } = useProgramCohorts(slug)
+    const cohorts: Cohort[] = data ?? []
 
-            <div className="space-y-4">
-                {cohorts.map((cohort) => {
-                    const seatsUsed = cohort.seats - cohort.seatsLeft
-                    const seatPercent = (seatsUsed / cohort.seats) * 100
-                    const FormatIcon = formatIcon[cohort.format]
-                    const statusCfg = statusConfig[cohort.status]
-                    const isClosed = cohort.status === "closed"
-                    const isUpcoming = cohort.status === "upcoming"
-                    const isSelfPaced = cohort.format === "Self-Paced"
+    if (isLoading) {
+        return (
+            <div className="space-y-10">
 
-                    return (
-                        <Card key={cohort.id} className="overflow-hidden shadow-none">
-                            {/* Header */}
-                            <div className="flex items-start justify-between gap-4 px-5 pt-5 pb-4">
-                                <div className="space-y-1">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <h3 className="font-semibold text-base">{cohort.name}</h3>
-                                        <Badge variant={statusCfg.variant} className="text-xs">
-                                            {statusCfg.label}
-                                        </Badge>
+                {/* Open cohorts */}
+                <section className="space-y-3">
+                    <Skeleton className="h-3 w-32" />
+
+                    <div className="divide-y border rounded-xl overflow-hidden">
+                        {Array.from({ length: 2 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="p-5 flex flex-col sm:flex-row sm:items-start gap-5"
+                            >
+                                {/* Left */}
+                                <div className="flex-1 space-y-3">
+                                    <Skeleton className="h-4 w-48" />
+
+                                    <div className="flex flex-wrap gap-3">
+                                        <Skeleton className="h-3 w-28" />
+                                        <Skeleton className="h-3 w-24" />
+                                        <Skeleton className="h-3 w-32" />
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                                        <FormatIcon className="w-3.5 h-3.5" />
-                                        <span>{cohort.format}</span>
+
+                                    {/* Seats pip */}
+                                    <div className="flex items-center gap-2 mt-2">
+                                        {Array.from({ length: 10 }).map((_, j) => (
+                                            <Skeleton key={j} className="w-1.5 h-1.5 rounded" />
+                                        ))}
+                                        <Skeleton className="h-3 w-24 ml-2" />
                                     </div>
                                 </div>
-                                <div className="text-right shrink-0">
-                                    <p className="text-2xl font-bold">${cohort.price}</p>
-                                    {cohort.originalPrice > cohort.price && (
-                                        <p className="text-sm text-muted-foreground line-through">${cohort.originalPrice}</p>
-                                    )}
+
+                                {/* Right */}
+                                <div className="flex sm:flex-col items-center sm:items-end gap-3 shrink-0">
+                                    <div className="space-y-1 text-right">
+                                        <Skeleton className="h-4 w-16 ml-auto" />
+                                        <Skeleton className="h-3 w-12 ml-auto" />
+                                    </div>
+
+                                    <Skeleton className="h-8 w-28" />
                                 </div>
                             </div>
+                        ))}
+                    </div>
 
-                            <Separator />
+                    <Skeleton className="h-3 w-64" />
+                </section>
 
-                            <CardContent className="p-5 grid sm:grid-cols-2 gap-x-8 gap-y-5">
-                                {/* Details */}
-                                <div className="space-y-3">
-                                    <div className="space-y-2 text-sm">
-                                        <div className="flex items-start gap-2">
-                                            <CalendarDays className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
-                                            <div>
-                                                <span className="font-medium">{cohort.startDate}</span>
-                                                {!isSelfPaced && (
-                                                    <span className="text-muted-foreground"> → {cohort.endDate}</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-start gap-2 text-muted-foreground">
-                                            <Clock className="w-4 h-4 mt-0.5 shrink-0" />
-                                            <span>{cohort.schedule}</span>
-                                        </div>
-                                        {!isSelfPaced && (
-                                            <div className="flex items-start gap-2 text-muted-foreground">
-                                                <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
-                                                <span>{cohort.timezone}</span>
-                                            </div>
-                                        )}
-                                        <div className="flex items-start gap-2 text-muted-foreground">
-                                            <Users className="w-4 h-4 mt-0.5 shrink-0" />
-                                            <span>Taught by {cohort.instructor}</span>
-                                        </div>
-                                    </div>
+                {/* Past cohorts */}
+                <section className="space-y-3">
+                    <Skeleton className="h-3 w-28" />
 
-                                    {/* Seats */}
-                                    {!isSelfPaced && (
-                                        <div className="space-y-1.5">
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-muted-foreground">
-                                                    {cohort.seatsLeft === cohort.seats
-                                                        ? "Spots available"
-                                                        : `${cohort.seatsLeft} of ${cohort.seats} spots left`}
-                                                </span>
-                                                {cohort.seatsLeft <= 8 && (
-                                                    <span className="text-destructive font-medium">Almost full</span>
-                                                )}
-                                            </div>
-                                            <Progress value={seatPercent} className="h-1.5" />
-                                        </div>
-                                    )}
-                                </div>
+                    <div className="divide-y border rounded-xl overflow-hidden">
+                        {Array.from({ length: 3 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="px-5 py-3.5 flex items-center gap-6"
+                            >
+                                <Skeleton className="h-3 w-32" />
+                                <Skeleton className="h-3 w-28" />
+                                <Skeleton className="h-3 w-24" />
+                            </div>
+                        ))}
+                    </div>
+                </section>
 
-                                {/* Highlights + CTA */}
-                                <div className="space-y-4">
-                                    <ul className="space-y-1.5">
-                                        {cohort.highlights.map((h) => (
-                                            <li key={h} className="flex items-start gap-2 text-sm">
-                                                <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                                <span>{h}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <div className="space-y-2">
-                                        <Button
-                                            className="w-full"
-                                            disabled={isClosed}
-                                            variant={isUpcoming ? "outline" : "default"}
-                                        >
-                                            {isClosed
-                                                ? "Enrolment Closed"
-                                                : isUpcoming
-                                                    ? "Join Waitlist"
-                                                    : "Enroll in This Cohort"}
-                                        </Button>
-                                        {!isClosed && !isUpcoming && (
-                                            <p className="text-xs text-center text-muted-foreground">
-                                                Enrolment deadline: <strong>{cohort.enrollDeadline}</strong>
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    )
-                })}
             </div>
+        )
+    }
 
-            {/* FAQ note */}
-            <p className="text-sm text-muted-foreground border rounded-lg p-4 bg-muted/30">
-                💳 <strong>Payment plans available.</strong> All cohorts include a 7-day money-back guarantee.
-                Questions? <span className="text-primary cursor-pointer hover:underline">Contact us</span> before enrolling.
-            </p>
+    if (isError) {
+        return (
+            <div className="py-8 text-sm text-destructive">
+                Failed to load cohorts.
+            </div>
+        )
+    }
+
+    if (!cohorts.length) {
+        return (
+            <div className="py-8 text-sm text-muted-foreground">
+                No cohorts available yet.
+            </div>
+        )
+    }
+
+    const openCohorts = cohorts.filter((c) => c.status === "open")
+    const pastCohorts = cohorts.filter((c) => c.status === "ended")
+
+    return (
+        <div className="space-y-10">
+
+            {/* Open cohorts */}
+            {openCohorts.length > 0 && (
+                <section className="space-y-3">
+                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                        Enrolling Now
+                    </h2>
+
+                    <div className="divide-y border rounded-xl overflow-hidden">
+                        {openCohorts.map((cohort) => {
+                            const discount =
+                                cohort.originalPrice &&
+                                cohort.originalPrice > cohort.price
+                                    ? Math.round(
+                                        ((cohort.originalPrice - cohort.price) /
+                                            cohort.originalPrice) *
+                                        100
+                                    )
+                                    : null
+
+                            return (
+                                <div
+                                    key={cohort.id}
+                                    className="p-5 flex flex-col sm:flex-row sm:items-start gap-5"
+                                >
+                                    {/* Left: info */}
+                                    <div className="flex-1 space-y-3">
+                                        <div>
+                                            <h3 className="font-semibold text-base leading-snug">
+                                                {cohort.name}
+                                            </h3>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground">
+                                            <span className="flex items-center gap-1.5">
+                                                <CalendarDays className="w-3.5 h-3.5 shrink-0" />
+                                                {formatDate(cohort.startDate)}
+                                                {cohort.endDate && (
+                                                    <span>
+                                                        {" "}— {formatDate(cohort.endDate)}
+                                                    </span>
+                                                )}
+                                            </span>
+
+                                            {cohort.schedule && (
+                                                <span className="flex items-center gap-1.5">
+                                                    <Clock className="w-3.5 h-3.5 shrink-0" />
+                                                    {cohort.schedule}
+                                                </span>
+                                            )}
+
+                                            <span className="flex items-center gap-1.5">
+                                                <Users className="w-3.5 h-3.5 shrink-0" />
+                                                {cohort.instructor}
+                                            </span>
+                                        </div>
+
+                                        <SeatsPip
+                                            seats={cohort.seats}
+                                            seatsLeft={cohort.seatsLeft}
+                                        />
+                                    </div>
+
+                                    {/* Right: price + CTA */}
+                                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-3 shrink-0">
+                                        <div className="text-right">
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-xl font-bold">
+                                                    BDT {cohort.price}
+                                                </span>
+                                                {discount && (
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="text-[10px] px-1.5 py-0"
+                                                    >
+                                                        -{discount}%
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            {cohort.originalPrice &&
+                                                cohort.originalPrice > cohort.price && (
+                                                    <p className="text-xs text-muted-foreground line-through">
+                                                        BDT {cohort.originalPrice}
+                                                    </p>
+                                                )}
+                                        </div>
+
+                                        <div className="space-y-4 text-right">
+                                            <Button size="sm" className="gap-1.5">
+                                                Enroll Now
+                                                <ArrowRight className="w-3.5 h-3.5" />
+                                            </Button>
+                                            {cohort.enrollDeadline && (
+                                                <p className="text-[11px] text-muted-foreground">
+                                                    Deadline{" "}
+                                                    <span className="font-medium text-foreground">
+                                                        {formatDate(cohort.enrollDeadline)}
+                                                    </span>
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    <p className="text-xs text-muted-foreground px-0.5">
+                        Payment plans available · 7-day money-back guarantee
+                    </p>
+                </section>
+            )}
+
+            {/* Past cohorts */}
+            {pastCohorts.length > 0 && (
+                <section className="space-y-3">
+                    <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
+                        Past Cohorts
+                    </h2>
+
+                    <div className="divide-y border rounded-xl overflow-hidden">
+                        {pastCohorts.map((cohort) => (
+                            <div
+                                key={cohort.id}
+                                className="px-5 py-3.5 flex flex-wrap items-center gap-x-6 gap-y-1 opacity-60"
+                            >
+                                <span className="text-sm font-medium">
+                                    {cohort.name}
+                                </span>
+
+                                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <CalendarDays className="w-3 h-3 shrink-0" />
+                                    {formatDate(cohort.startDate)}
+                                    {cohort.endDate && (
+                                        <span>— {formatDate(cohort.endDate)}</span>
+                                    )}
+                                </span>
+
+                                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <Users className="w-3 h-3 shrink-0" />
+                                    {cohort.instructor}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
         </div>
     )
 }

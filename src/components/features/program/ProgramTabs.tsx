@@ -8,33 +8,61 @@ import ProgramOverview from "@/components/features/program/ProgramOverview"
 import ProgramCurriculum from "@/components/features/program/ProgramCurriculum"
 import ProgramCohorts from "@/components/features/program/ProgramCohorts"
 
-export default function ProgramTabs() {
+type Props = {
+    activeTab: string
+    onTabChange: (value: string) => void
+    overview?: any
+}
+
+export default function ProgramTabs({activeTab, onTabChange, overview}: Props) {
     return (
-        <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="w-full justify-start border-b rounded-none bg-transparent p-0 h-auto gap-0">
+        <Tabs
+            value={activeTab}
+            onValueChange={onTabChange}
+            className="space-y-6"
+        >
+            <TabsList className="w-full justify-start border-b bg-transparent p-0 h-auto">
+
                 <TabsTrigger
                     value="overview"
-                    className="border-b-2 data-[state=active]:bg-accent px-4  py-3 text-sm font-medium">
+                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                               data-[state=active]:bg-accent
+                               data-[state=active]:text-foreground
+                               text-muted-foreground"
+                >
                     Overview
                 </TabsTrigger>
+
                 <TabsTrigger
                     value="curriculum"
-                    className="border-b-2 data-[state=active]:bg-accent px-4  py-3 text-sm font-medium">
+                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                               data-[state=active]:bg-accent
+                               data-[state=active]:text-foreground
+                               text-muted-foreground"
+                >
                     Curriculum
                 </TabsTrigger>
+
                 <TabsTrigger
                     value="cohorts"
-                    className="border-b-2 data-[state=active]:bg-accent px-4 py-3 text-sm font-medium">
+                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                               data-[state=active]:bg-accent
+                               data-[state=active]:text-foreground
+                               text-muted-foreground"
+                >
                     Cohorts
                 </TabsTrigger>
+
             </TabsList>
 
             <TabsContent value="overview">
-                <ProgramOverview />
+                <ProgramOverview data={overview} />
             </TabsContent>
+
             <TabsContent value="curriculum">
                 <ProgramCurriculum />
             </TabsContent>
+
             <TabsContent value="cohorts">
                 <ProgramCohorts />
             </TabsContent>
