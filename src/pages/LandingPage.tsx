@@ -7,27 +7,27 @@ export default function LandingPage() {
         <div className="min-h-screen bg-background flex flex-col">
 
             {/* Navbar */}
-            <header className="border-b">
-                <div className="container mx-auto flex h-16 items-center justify-between px-6">
+            {/*<header className="border-b">*/}
+            {/*    <div className="container mx-auto flex h-16 items-center justify-between px-6">*/}
 
-                    <Link to="/" className="text-lg font-semibold">
-                        Radixia
-                    </Link>
+            {/*        <Link to="/" className="text-lg font-semibold">*/}
+            {/*            Radixia*/}
+            {/*        </Link>*/}
 
-                    <div className="flex items-center gap-3">
+            {/*        <div className="flex items-center gap-3">*/}
 
-                        <Button asChild variant="ghost">
-                            <Link to="/login">Login</Link>
-                        </Button>
+            {/*            <Button asChild variant="ghost">*/}
+            {/*                <Link to="/login">Login</Link>*/}
+            {/*            </Button>*/}
 
-                        <Button asChild>
-                            <Link to="/register">Register</Link>
-                        </Button>
+            {/*            <Button asChild>*/}
+            {/*                <Link to="/register">Register</Link>*/}
+            {/*            </Button>*/}
 
-                    </div>
+            {/*        </div>*/}
 
-                </div>
-            </header>
+            {/*    </div>*/}
+            {/*</header>*/}
 
             {/* Hero */}
             <main className="flex flex-1 items-center justify-center px-6">

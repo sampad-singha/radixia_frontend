@@ -1,9 +1,4 @@
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/ui/tabs"
+import {Tabs, TabsContent, TabsList, TabsTrigger,} from "@/components/ui/tabs"
 import ProgramOverview from "@/components/features/program/ProgramOverview"
 import ProgramCurriculum from "@/components/features/program/ProgramCurriculum"
 import ProgramCohorts from "@/components/features/program/ProgramCohorts"
@@ -25,7 +20,7 @@ export default function ProgramTabs({activeTab, onTabChange, overview}: Props) {
 
                 <TabsTrigger
                     value="overview"
-                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                    className="border-b-2 border-transparent px-4 py-3 text-sm font-medium
                                data-[state=active]:bg-accent
                                data-[state=active]:text-foreground
                                text-muted-foreground"
@@ -35,7 +30,7 @@ export default function ProgramTabs({activeTab, onTabChange, overview}: Props) {
 
                 <TabsTrigger
                     value="curriculum"
-                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                    className="border-b-2 border-transparent px-4 py-3 text-sm font-medium
                                data-[state=active]:bg-accent
                                data-[state=active]:text-foreground
                                text-muted-foreground"
@@ -45,7 +40,7 @@ export default function ProgramTabs({activeTab, onTabChange, overview}: Props) {
 
                 <TabsTrigger
                     value="cohorts"
-                    className="rounded-none border-b-2 border-transparent px-4 py-3 text-sm font-medium
+                    className="border-b-2 border-transparent px-4 py-3 text-sm font-medium
                                data-[state=active]:bg-accent
                                data-[state=active]:text-foreground
                                text-muted-foreground"

@@ -83,7 +83,7 @@ export default function EnableMfa({
     if (availableMethods.length === 0) return null
 
     return (
-        <Card>
+        <Card className="shadow-none">
 
             <CardHeader>
                 <CardTitle>Enable Two-Factor Authentication</CardTitle>

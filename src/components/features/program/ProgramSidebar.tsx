@@ -144,26 +144,6 @@ export default function ProgramSidebar({ data }: Props) {
                     </Button>
                 </div>
             </div>
-
-            {/* Extras */}
-            {/*<div className="border rounded-lg p-4 space-y-2 bg-muted/30">*/}
-            {/*    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">*/}
-            {/*        Cohort extras*/}
-            {/*    </p>*/}
-
-            {/*    {[*/}
-            {/*        "Live sessions twice a week",*/}
-            {/*        "Private Discord community",*/}
-            {/*        "2× 1-on-1 code reviews",*/}
-            {/*        "Access to all recordings",*/}
-            {/*    ].map((item) => (*/}
-            {/*        <div key={item} className="flex items-center gap-2 text-sm">*/}
-            {/*            <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />*/}
-            {/*            <span>{item}</span>*/}
-            {/*        </div>*/}
-            {/*    ))}*/}
-            {/*</div>*/}
-
         </aside>
     )
 }

@@ -1,30 +1,20 @@
-import { useUser } from "@/queries/auth/auth.queries.ts"
-import {Skeleton} from "@/components/ui/skeleton.tsx";
+import DashboardGreeting from "@/components/features/dashboard/Dashboardgreeting.tsx";
+import DashboardStats from "@/components/features/dashboard/Dashboardstats.tsx";
+import DashboardHeroRow from "@/components/features/dashboard/Dashboardherorow.tsx";
+import DashboardActivityChart from "@/components/features/dashboard/Dashboardactivitychart.tsx";
+import DashboardLearningRow from "@/components/features/dashboard/Dashboardlearningrow.tsx";
+import DashboardRecommended from "@/components/features/dashboard/Dashboardrecommended.tsx";
+
 
 export default function DashboardPage() {
-    const { data, isLoading, isError } = useUser()
-
-    if (isLoading) {
-        return (
-            <div className="space-y-4">
-                <Skeleton className="h-8 w-48" />
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-24 w-full" />
-            </div>
-        )
-    }
-    console.log("isLoading:", isLoading)
-
-    if (isError) return <div>Error loading user</div>
-
-    const user = data?.data?.user
-
     return (
-        <div>
-            <h1>Dashboard</h1>
-
-            <p><strong>Name:</strong> {user?.name}</p>
-            <p><strong>Email:</strong> {user?.email}</p>
+        <div className="max-w-6xl mx-auto p-5 space-y-5">
+            <DashboardGreeting />
+            <DashboardStats />
+            <DashboardHeroRow />
+            <DashboardLearningRow />
+            <DashboardActivityChart />
+            <DashboardRecommended />
         </div>
     )
 }
