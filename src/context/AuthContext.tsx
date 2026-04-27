@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react"
-import { useUser } from "@/features/authentication/queries/auth.queries.ts"
+import { useUser } from "@/queries/auth/auth.queries.ts"
 
 const AuthContext = createContext<any>(null)
 
